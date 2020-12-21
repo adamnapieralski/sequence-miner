@@ -1,9 +1,9 @@
 #pragma once
-#include <vector>
 
-template <typename T>
+#include <InputData.h>
+
 class Algorithm {
-public:
-    virtual bool loadData(const std::vector<std::vector<T>> &sequences) = 0;
-    virtual bool run() = 0;
+ public:
+  virtual bool loadData(InputData input) = 0;
+  virtual bool run() = 0;
 };
