@@ -3,17 +3,13 @@
 #include <algorithm>
 #include <execution>
 #include <fstream>
-#include <functional>
 #include <iostream>
 #include <map>
-#include <memory>
-#include <set>
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
 
 using SequenceMap = std::unordered_map<int, std::vector<int>>;
-using Sequence = std::vector<int>;
 
 namespace {
 SequenceMap readCharDataNoSep(std::ifstream& f, char sep) {
@@ -172,4 +168,22 @@ void InputData::printData() const {
     }
     std::cout << std::endl;
   }
+}
+
+void InputData::setData(const std::vector<Sequence>& data) { data_ = data; }
+
+void InputData::push_back(const Sequence& seq) { data_.push_back(seq); }
+
+std::set<int> InputData::uniqueSingleItems() const {
+  std::set<int> unique_items;
+
+  for (const auto& v : data_) {
+    for (auto s : v) {
+      if (s != -1) {
+        unique_items.insert(s);
+      }
+    }
+  }
+
+  return unique_items;
 }
