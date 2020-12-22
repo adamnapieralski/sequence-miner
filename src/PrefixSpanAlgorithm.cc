@@ -4,6 +4,10 @@
 
 bool PrefixSpanAlgorithm::loadData(InputData input) {
   std::cout << "Load data for PrefixSpan algorithm" << std::endl;
+  input.printData();
+  input.removeInfrequentItems(1);
+  input.printData();
+
   return true;
 }
 

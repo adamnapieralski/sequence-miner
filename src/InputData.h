@@ -22,6 +22,10 @@ class InputData {
   const_iterator begin() const;
   const_iterator end() const;
 
+  int removeInfrequentItems(int min_support);
+
+  void printData() const;
+
  private:
   std::vector<std::vector<int>> data_;
 };

@@ -1,10 +1,13 @@
 #include "InputData.h"
 
+#include <algorithm>
+#include <execution>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <map>
 #include <memory>
+#include <set>
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
@@ -59,6 +62,31 @@ std::vector<Sequence> mapValues(SequenceMap& map) {
   return v;
 }
 
+std::set<int> infrequentItems(const std::vector<Sequence>& data,
+                              int min_support) {
+  std::unordered_map<int, int> counter;
+
+  for (const auto& seq : data) {
+    std::set<int> items;
+    for (auto item : seq) {
+      if (item != -1) {
+        items.insert(item);
+      }
+    }
+    for (auto item : items) {
+      ++counter[item];
+    }
+  }
+
+  std::set<int> infrequent_items;
+  for (auto it = counter.begin(); it != counter.end(); ++it) {
+    if (it->second <= min_support) {
+      infrequent_items.insert(it->first);
+    }
+  }
+  return infrequent_items;
+}
+
 }  // namespace
 
 InputData InputData::load(const std::string& input, char separator,
@@ -82,14 +110,6 @@ InputData InputData::load(const std::string& input, char separator,
 
   std::cout << "Loaded " << d.data_.size() << " sequences" << std::endl;
 
-  for (const auto& v : d.data_) {
-    std::cout << "seq: ";
-    for (auto s : v) {
-      std::cout << s << " ";
-    }
-    std::cout << std::endl;
-  }
-
   return d;
 }
 
@@ -102,3 +122,54 @@ iterator InputData::end() { return data_.end(); }
 
 const_iterator InputData::begin() const { return data_.begin(); }
 const_iterator InputData::end() const { return data_.end(); }
+
+int InputData::removeInfrequentItems(int min_support) {
+  const auto items_to_delete = infrequentItems(data_, min_support);
+
+  std::cout << "Removing infrequent items: ";
+  for (auto item : items_to_delete) {
+    std::cout << item << " ";
+  }
+  std::cout << std::endl;
+
+  std::transform(std::execution::par, data_.begin(), data_.end(), data_.begin(),
+                 [&items_to_delete](Sequence seq) {
+                   seq.erase(std::remove_if(seq.begin(), seq.end(),
+                                            [&items_to_delete](int x) {
+                                              return x != -1 &&
+                                                     items_to_delete.find(x) !=
+                                                         items_to_delete.end();
+                                            }),
+                             seq.end());
+
+                   for (auto it = seq.begin() + 1; it != seq.end();) {
+                     if (*(it - 1) == *it) {
+                       it = seq.erase(it);
+                     } else {
+                       ++it;
+                     }
+                   }
+
+                   if (seq.size() > 0 && seq.front() == -1) {
+                     seq.erase(seq.begin());
+                   }
+
+                   if (seq.size() > 0 && seq.back() == -1) {
+                     seq.pop_back();
+                   }
+
+                   return seq;
+                 });
+
+  return items_to_delete.size();
+}
+
+void InputData::printData() const {
+  for (const auto& v : data_) {
+    std::cout << "seq: ";
+    for (auto s : v) {
+      std::cout << s << " ";
+    }
+    std::cout << std::endl;
+  }
+}
