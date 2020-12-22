@@ -5,6 +5,7 @@ set(SRC_LIST
     AlgorithmManager.cc
     InputData.cc
     SpadeAlgorithm.cc
+    PrefixSpanAlgorithm.cc
 )
 
 add_library(${LIB_NAME} ${SRC_LIST})

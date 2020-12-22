@@ -7,6 +7,7 @@
 TEST_CASE("SPADE Test") {
   SpadeAlgorithm spade;
 
-  REQUIRE(spade.loadData(InputData::load("path", ' ')));
+  REQUIRE(
+      spade.loadData(InputData::load("path", ' ', char(), DataType::t_char)));
   REQUIRE(spade.run());
 }
