@@ -5,8 +5,8 @@
 #include <fstream>
 #include <memory>
 
-#include "InputData.h"
 #include "PrefixSpanAlgorithm.h"
+#include "SequenceData.h"
 #include "SpadeAlgorithm.h"
 
 namespace {
@@ -44,7 +44,7 @@ AlgorithmManager::AlgorithmManager() {
                  {par_separator, ' '},
                  {par_seq_items_separator, char()},
                  {par_algorithm, "spade"},
-                 {par_min_support, 10},
+                 {par_min_support, 2},
                  {par_data_type, "char"}};
 }
 
@@ -84,14 +84,16 @@ int AlgorithmManager::run() {
     const auto& type = std::get<std::string>(parameters_[par_data_type]);
     auto dtype = type == "char" ? DataType::t_char : DataType::t_int;
 
-    algorithm->loadData(InputData::load(path, sep, seq_sep, dtype));
+    algorithm->loadData(SequenceData::load(path, sep, seq_sep, dtype));
 
   } catch (const std::runtime_error& e) {
     std::cout << "Error: " << e.what() << std::endl;
     return 1;
   }
 
-  auto status = algorithm->run();
+  auto min_support = std::get<int>(parameters_[par_min_support]);
+
+  auto status = algorithm->run(min_support);
 
   return status ? 0 : 3;
 };

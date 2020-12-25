@@ -3,9 +3,10 @@ set(LIB_NAME sequence_miner_lib)
 
 set(SRC_LIST    
     AlgorithmManager.cc
-    InputData.cc
+    SequenceData.cc
     SpadeAlgorithm.cc
     PrefixSpanAlgorithm.cc
+    utils.hpp
 )
 
 add_library(${LIB_NAME} ${SRC_LIST})
