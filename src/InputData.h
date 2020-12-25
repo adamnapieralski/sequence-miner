@@ -13,6 +13,13 @@ using const_iterator = std::vector<std::vector<int>>::const_iterator;
 class InputData {
  public:
   InputData() = default;
+
+  InputData(const InputData &) = delete;
+  InputData &operator=(const InputData &) = delete;
+
+  InputData(InputData &&) = default;
+  InputData &operator=(InputData &&) = default;
+
   static InputData load(const std::string &input_path, char separator,
                         char seq_separator, DataType type);
   int size() const;
