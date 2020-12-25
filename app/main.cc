@@ -1,11 +1,13 @@
-#include <SpadeAlgorithm.hpp>
+
+#include <AlgorithmManager.h>
+
 #include <iostream>
 
 int main(int argc, const char* argv[]) {
-  SpadeAlgorithm<int> spade;
+  AlgorithmManager m;
 
-  spade.loadData({});
-  spade.run();
+  auto config = argc == 2 ? argv[1] : "data/config.yaml";
+  m.loadConfig(config);
 
-  return 0;
+  return m.run();
 }
