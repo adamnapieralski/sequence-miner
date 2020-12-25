@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-enum class DataType { t_int, t_char, t_string };
+enum class DataType { t_int, t_char };
 using Sequence = std::vector<int>;
 
 using iterator = std::vector<std::vector<int>>::iterator;

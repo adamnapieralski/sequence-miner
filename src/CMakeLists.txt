@@ -2,10 +2,11 @@
 set(LIB_NAME sequence_miner_lib)
 
 set(SRC_LIST    
-    AlgorithmManager.cc
+    AlgorithmManager.cc    
     SequenceData.cc
     SpadeAlgorithm.cc
     PrefixSpanAlgorithm.cc
+    Parameters.cc
     utils.hpp
 )
 
