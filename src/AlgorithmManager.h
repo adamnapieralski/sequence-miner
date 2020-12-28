@@ -1,15 +1,10 @@
 #pragma once
 
-#include <map>
-#include <string>
-#include <variant>
-#include <vector>
-
-using Parameters = std::map<std::string, std::variant<int, char, std::string>>;
+#include "Parameters.h"
 
 class AlgorithmManager {
  public:
-  AlgorithmManager();
+  AlgorithmManager() = default;
   void loadConfig(const char* path);
   int run();
 

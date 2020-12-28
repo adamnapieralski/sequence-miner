@@ -4,24 +4,24 @@
 #include <string>
 #include <vector>
 
-enum class DataType { t_int, t_char, t_string };
+enum class DataType { t_int, t_char };
 using Sequence = std::vector<int>;
 
 using iterator = std::vector<std::vector<int>>::iterator;
 using const_iterator = std::vector<std::vector<int>>::const_iterator;
 
-class InputData {
+class SequenceData {
  public:
-  InputData() = default;
+  SequenceData() = default;
 
-  InputData(const InputData &) = delete;
-  InputData &operator=(const InputData &) = delete;
+  SequenceData(const SequenceData &) = delete;
+  SequenceData &operator=(const SequenceData &) = delete;
 
-  InputData(InputData &&) = default;
-  InputData &operator=(InputData &&) = default;
+  SequenceData(SequenceData &&) = default;
+  SequenceData &operator=(SequenceData &&) = default;
 
-  static InputData load(const std::string &input_path, char separator,
-                        char seq_separator, DataType type);
+  static SequenceData load(const std::string &input_path, char separator,
+                           char seq_separator, DataType type);
   int size() const;
   const std::vector<int> &sequence(int id) const;
 
@@ -30,6 +30,8 @@ class InputData {
 
   const_iterator begin() const;
   const_iterator end() const;
+
+  void clear();
 
   int removeInfrequentItems(int min_support);
 

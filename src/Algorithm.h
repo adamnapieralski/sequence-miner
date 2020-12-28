@@ -1,9 +1,9 @@
 #pragma once
 
-#include <InputData.h>
+#include "SequenceData.h"
 
 class Algorithm {
  public:
-  virtual bool loadData(InputData input) = 0;
-  virtual bool run() = 0;
+  virtual bool loadData(SequenceData input) = 0;
+  virtual bool run(int min_support) = 0;
 };

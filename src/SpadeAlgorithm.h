@@ -7,6 +7,6 @@
 class SpadeAlgorithm : public Algorithm {
  public:
   SpadeAlgorithm() = default;
-  bool loadData(InputData input) override;
-  bool run() override;
+  bool loadData(SequenceData input) override;
+  bool run(int min_support) override;
 };
