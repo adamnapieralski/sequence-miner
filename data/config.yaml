@@ -1,5 +1,5 @@
 # file with input data, full path should be provided
-input_file: /home/lukasz/Documents/med/sequence-miner/data/input_prefixspan_paper.txt
+input_file: /home/napiad/eiti_sem2/med/sequence-miner/data/simple_input.txt
 # minimum support for the sequence 
 min_support: 1
 # separator between sequence_id, time_id and the sequence data

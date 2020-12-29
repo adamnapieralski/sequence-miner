@@ -9,4 +9,7 @@ class SpadeAlgorithm : public Algorithm {
   SpadeAlgorithm() = default;
   bool loadData(SequenceData input) override;
   bool run(int min_support) override;
+
+ private:
+  SequenceData input_;
 };

@@ -33,8 +33,6 @@ class PrefixSpanAlgorithm : public Algorithm {
   void appendFinalSequences(const Prefix &prefix,
                             const std::vector<int> &items);
 
-  int min_support_{1};
-  SequenceData input_;
   std::vector<Sequence> final_sequences_;
   mutable std::mutex final_sequences_mutex_;
 };
