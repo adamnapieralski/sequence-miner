@@ -42,8 +42,8 @@ class SequenceData {
   void push_back(const Sequence &seq);
 
   std::set<int> uniqueSingleItems() const;
-
-  std::vector<EquivalenceClass> getFrequentSingleItemClasses(const int);
+  IdList getSingleItemIdList(int) const;
+  std::vector<EquivalenceClass> getSingleItemClasses() const;
 
  private:
   std::vector<Sequence> data_;

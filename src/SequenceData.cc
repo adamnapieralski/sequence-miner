@@ -192,3 +192,50 @@ std::set<int> SequenceData::uniqueSingleItems() const {
 
   return unique_items;
 }
+
+IdList SequenceData::getSingleItemIdList(int item) const {
+  IdList idList;
+  int sid = 0;
+  for (const auto& v : data_) {
+    EidSequence eidSeq{};
+    int eid = 0;
+    for (auto s : v) {
+      if (s == -1) {
+        ++eid;
+      } else if (s == item) {
+        eidSeq.push_back(eid);
+      }
+    }
+    if (eidSeq.size() > 0) {
+      idList.insert(std::pair<int, EidSequence>(sid, eidSeq));
+    }
+    ++sid;
+  }
+  return idList;
+}
+
+std::vector<EquivalenceClass> SequenceData::getSingleItemClasses() const {
+  auto items = uniqueSingleItems();
+  std::vector<EquivalenceClass> singleItemClasses;
+  
+  for (const auto& item : items) {
+    singleItemClasses.push_back(EquivalenceClass(Sequence({ item })));
+  }
+
+  std::for_each(
+    std::execution::par,
+    singleItemClasses.begin(),
+    singleItemClasses.end(),
+    [=] (auto& singleClass) {
+      singleClass.setIdList(
+        getSingleItemIdList(singleClass.getSequence().at(0))
+      );
+    }
+  );
+
+  for (auto& c : singleItemClasses) {
+    c.print();
+  }
+
+  return singleItemClasses;
+}

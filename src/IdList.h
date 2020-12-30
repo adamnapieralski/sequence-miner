@@ -11,11 +11,13 @@ class IdList {
   IdList() = default;
   IdList(const std::map<int, EidSequence> &);
 
+  void insert(std::pair<int, EidSequence>);
+
   int size() const;
 
   void clear();
 
-  void printData() const;
+  void print() const;
 
  private:
   std::map<int, EidSequence> data_;

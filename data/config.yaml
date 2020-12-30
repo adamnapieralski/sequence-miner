@@ -9,4 +9,4 @@ seq_separator:
 #  data type of the input sequences, possible values: char, int
 data_type: 'char'
 # algorithm to detect sequences, possible values: spade, prefixspan
-algorithm: 'prefixspan'
+algorithm: 'spade'
