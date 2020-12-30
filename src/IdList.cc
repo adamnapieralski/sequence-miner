@@ -15,8 +15,21 @@ IdList::IdList(const std::map<int, EidSequence>& data) {
   data_ = data;
 }
 
-void IdList::insert(std::pair<int, EidSequence> seqEids) {
+IdList::IdList(int sid, int eid) {
+  data_.insert(std::pair<int, EidSequence>(sid, EidSequence({ eid })));
+}
+
+void IdList::insert(const std::pair<int, EidSequence> seqEids) {
   data_.insert(seqEids);
+}
+
+
+void IdList::addEidToSeq(int sid, int eid) {
+  if (data_.find(sid) != data_.end()) {
+    data_[sid].push_back(eid);
+  } else {
+    data_.insert(std::pair<int, EidSequence>(sid, EidSequence{ eid }));
+  }
 }
 
 void IdList::print() const {

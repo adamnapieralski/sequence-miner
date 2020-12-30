@@ -45,6 +45,9 @@ class SequenceData {
   IdList getSingleItemIdList(int) const;
   std::vector<EquivalenceClass> getSingleItemClasses() const;
 
+  void updateSeqClassMap(std::map<Sequence, EquivalenceClass>& seqClassMap, Sequence& seq, int sid, int eid) const;
+  std::vector<EquivalenceClass> getDoubleFrequentItemClasses(int minSupport) const;
+
  private:
   std::vector<Sequence> data_;
 };

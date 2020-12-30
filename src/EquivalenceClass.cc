@@ -24,10 +24,17 @@ void EquivalenceClass::setIdList(const IdList & idList) {
   idList_ = idList;
 }
 
+void EquivalenceClass::insertToIdList(const std::pair<int, EidSequence> seqIds) {
+  idList_.insert(seqIds);
+}
+
+void EquivalenceClass::addEidToSeqIdList(int sid, int eid) {
+  idList_.addEidToSeq(sid, eid);
+}
+
 Sequence EquivalenceClass::getSequence() const {
   return seq_;
 }
-
 
 void EquivalenceClass::print() const {
 

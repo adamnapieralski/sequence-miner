@@ -15,6 +15,9 @@ class EquivalenceClass {
   EquivalenceClass(const Sequence &, const IdList &);
 
   void setIdList(const IdList &);
+  void insertToIdList(const std::pair<int, EidSequence>);
+  void addEidToSeqIdList(int sid, int eid);
+
   Sequence getSequence() const;
 
   void addMember(const EquivalenceClass &);
@@ -25,4 +28,5 @@ class EquivalenceClass {
   Sequence seq_;
   IdList idList_;
   std::vector<EquivalenceClass> members_;
+  // TODO add support
 };

@@ -11,9 +11,11 @@ bool SpadeAlgorithm::loadData(SequenceData input) {
 bool SpadeAlgorithm::run(int min_support) {
   std::cout << "Run SPADE algorithm" << std::endl;
   min_support_ = min_support;
-  input_.printData();
   input_.removeInfrequentItems(min_support_);
+  input_.printData();
   auto frequentItems = input_.getSingleItemClasses();
+
+  input_.getDoubleFrequentItemClasses(min_support_);
   
   
 
