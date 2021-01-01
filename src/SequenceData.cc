@@ -214,7 +214,7 @@ IdList SequenceData::getSingleItemIdList(int item) const {
   return idList;
 }
 
-std::vector<EquivalenceClass> SequenceData::getSingleItemClasses() const {
+std::vector<EquivalenceClass> SequenceData::getSingleFrequentItemClasses(int minSupport) const {
   auto items = uniqueSingleItems();
   std::vector<EquivalenceClass> singleItemClasses;
   
@@ -231,6 +231,16 @@ std::vector<EquivalenceClass> SequenceData::getSingleItemClasses() const {
         getSingleItemIdList(singleClass.getSequence().at(0))
       );
     }
+  );
+
+  // remove infrequent classes
+  singleItemClasses.erase(
+    std::remove_if(std::execution::par, singleItemClasses.begin(), singleItemClasses.end(),
+      [=] (const auto& singleClass) {
+        return singleClass.support() <= minSupport;
+      }
+    ),
+    singleItemClasses.end()
   );
 
   for (auto& c : singleItemClasses) {
@@ -276,10 +286,17 @@ std::vector<EquivalenceClass> SequenceData::getDoubleFrequentItemClasses(int min
       }
     }
   }
-  // TODO filter over minSupport
+
   for (const auto& p : seqClassMap) {
-    p.second.print();
-    doubleItemClasses.push_back(p.second);
+    // p.second.print();
+    if (p.second.support() > minSupport) {
+      doubleItemClasses.push_back(p.second);
+    }
   }
+
+  for (auto& c : doubleItemClasses) {
+    c.print();
+  }
+
   return doubleItemClasses;
 }

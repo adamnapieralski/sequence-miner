@@ -10,4 +10,5 @@ class Algorithm {
  protected:
   int min_support_{1};
   SequenceData input_;
+  std::vector<Sequence> final_sequences_;
 };

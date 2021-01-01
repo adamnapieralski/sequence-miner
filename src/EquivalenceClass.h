@@ -22,6 +22,8 @@ class EquivalenceClass {
 
   void addMember(const EquivalenceClass &);
 
+  int support() const;
+  
   void print() const;
 
  private:

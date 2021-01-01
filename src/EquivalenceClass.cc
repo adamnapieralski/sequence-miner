@@ -36,6 +36,10 @@ Sequence EquivalenceClass::getSequence() const {
   return seq_;
 }
 
+int EquivalenceClass::support() const {
+  return idList_.size();
+}
+
 void EquivalenceClass::print() const {
 
   std::cout << "Equivalence class for seq:\t";

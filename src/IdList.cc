@@ -32,6 +32,11 @@ void IdList::addEidToSeq(int sid, int eid) {
   }
 }
 
+int IdList::size() const {
+  return data_.size();
+}
+
+
 void IdList::print() const {
   for (const auto& pair : data_) {
     std::cout << "SID: " << pair.first << "\t" << "EIDs: ";

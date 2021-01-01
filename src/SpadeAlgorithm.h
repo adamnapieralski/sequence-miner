@@ -10,6 +10,9 @@ class SpadeAlgorithm : public Algorithm {
   bool loadData(SequenceData input) override;
   bool run(int min_support) override;
 
+  void pushToFinalSequences(const std::vector<EquivalenceClass>& eqClasses);
+
+
  private:
   SequenceData input_;
 };
