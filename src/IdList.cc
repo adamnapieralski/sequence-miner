@@ -26,10 +26,50 @@ void IdList::insert(const std::pair<int, EidSequence> seqEids) {
 
 void IdList::addEidToSeq(int sid, int eid) {
   if (data_.find(sid) != data_.end()) {
-    data_[sid].push_back(eid);
+    data_[sid].insert(eid);
   } else {
     data_.insert(std::pair<int, EidSequence>(sid, EidSequence{ eid }));
   }
+}
+
+std::map<int, EidSequence> IdList::getData() const {
+  return data_;
+}
+
+
+IdList IdList::joinEqual(const IdList& idList) const {
+  IdList resIdList;
+  for (const auto& seqEid : idList.data_) {
+    int sid = seqEid.first;
+    if (data_.find(sid) != data_.end()) {
+      EidSequence eidSeq;
+      std::set_intersection(
+        seqEid.second.cbegin(), seqEid.second.cend(),
+        data_.at(sid).cbegin(), data_.at(sid).cend(),
+        std::inserter(eidSeq, eidSeq.begin())
+      );
+      if (!eidSeq.empty()) {
+        resIdList.insert(std::pair<int, EidSequence>(sid, eidSeq));
+      }
+    }
+  }
+  return resIdList;
+}
+
+IdList IdList::joinLatter(const IdList& idList) const {
+  IdList resIdList;
+  for (const auto& seqEid : idList.data_) {
+    int sid = seqEid.first;
+    if (data_.find(sid) != data_.end()) {
+      int minLeft = *(data_.at(sid).begin());
+      auto upBoundIt = seqEid.second.upper_bound(minLeft);
+      EidSequence eidSeq(upBoundIt, seqEid.second.end());
+      if (!eidSeq.empty()) {
+        resIdList.insert(std::pair<int, EidSequence>(sid, eidSeq));
+      }
+    }
+  }
+  return resIdList;
 }
 
 int IdList::size() const {

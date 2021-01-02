@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 #include "SequenceData.h"
+#include "Algorithm.h"
 #include "utils.hpp"
 
 namespace {
@@ -84,15 +85,6 @@ void PrefixSpanAlgorithm::printSequences(
     it->second.printData();
   }
   std::cout << "********************************************" << std::endl;
-}
-
-void PrefixSpanAlgorithm::printFinalSequences() const {
-  std::cout << "Final sequences: ";
-  std::lock_guard<std::mutex> lock(final_sequences_mutex_);
-  for (const auto &seq : final_sequences_) {
-    std::cout << utils::print(seq) << " ";
-  }
-  std::cout << std::endl;
 }
 
 std::vector<int> PrefixSpanAlgorithm::frequentItems(

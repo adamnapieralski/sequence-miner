@@ -6,6 +6,7 @@ set(SRC_LIST
     SequenceData.cc
     IdList.cc
     EquivalenceClass.cc
+    Algorithm.cc
     SpadeAlgorithm.cc
     PrefixSpanAlgorithm.cc
     Parameters.cc

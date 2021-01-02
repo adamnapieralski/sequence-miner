@@ -203,7 +203,7 @@ IdList SequenceData::getSingleItemIdList(int item) const {
       if (s == -1) {
         ++eid;
       } else if (s == item) {
-        eidSeq.push_back(eid);
+        eidSeq.insert(eid);
       }
     }
     if (eidSeq.size() > 0) {
@@ -242,10 +242,6 @@ std::vector<EquivalenceClass> SequenceData::getSingleFrequentItemClasses(int min
     ),
     singleItemClasses.end()
   );
-
-  for (auto& c : singleItemClasses) {
-    c.print();
-  }
 
   return singleItemClasses;
 }
@@ -292,10 +288,6 @@ std::vector<EquivalenceClass> SequenceData::getDoubleFrequentItemClasses(int min
     if (p.second.support() > minSupport) {
       doubleItemClasses.push_back(p.second);
     }
-  }
-
-  for (auto& c : doubleItemClasses) {
-    c.print();
   }
 
   return doubleItemClasses;

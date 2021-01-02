@@ -3,8 +3,9 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <set>
 
-using EidSequence = std::vector<int>;
+using EidSequence = std::set<int>;
 
 class IdList {
  public:
@@ -16,6 +17,12 @@ class IdList {
   void addEidToSeq(int sid, int eid);
 
   int size() const;
+
+  std::map<int, EidSequence> getData() const;
+
+  IdList joinEqual(const IdList& idList) const;
+
+  IdList joinLatter(const IdList& idList) const;
 
   void clear();
 
