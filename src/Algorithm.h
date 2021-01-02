@@ -9,7 +9,7 @@ class Algorithm {
   virtual bool loadData(SequenceData input) = 0;
   virtual bool run(int min_support) = 0;
 
-  void printFinalSequences() const;
+  void printFinalSequences();
 
  protected:
   int min_support_{1};
