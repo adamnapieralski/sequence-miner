@@ -3,23 +3,27 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "IdList.h"
 
+class EquivalenceClass;
+
 using Sequence = std::vector<int>;
+using EquivalenceClass_ = std::shared_ptr<EquivalenceClass>;
 
 class EquivalenceClass {
  public:
   EquivalenceClass() = default;
-  EquivalenceClass(const Sequence &);
-  EquivalenceClass(const Sequence &, const IdList &);
+  EquivalenceClass(const Sequence& seq);
+  EquivalenceClass(const Sequence& seq, IdList_ idList);
 
-  void setIdList(const IdList &);
+  void setIdList(IdList_ idList);
   void insertToIdList(const std::pair<int, EidSequence>);
   void addEidToSeqIdList(int sid, int eid);
 
   Sequence getSequence() const;
-  IdList getIdList() const;
+  IdList_ getIdList() const;
 
   void addMember(const EquivalenceClass& member);
   void setMembers(const std::vector<EquivalenceClass>& members);
@@ -41,6 +45,7 @@ class EquivalenceClass {
 
  private:
   Sequence seq_;
-  IdList idList_;
+  IdList_ idList_;
   std::vector<EquivalenceClass> members_;
+  EquivalenceClass_ child;
 };

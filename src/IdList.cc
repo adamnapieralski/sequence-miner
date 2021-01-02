@@ -37,9 +37,9 @@ std::map<int, EidSequence> IdList::getData() const {
 }
 
 
-IdList IdList::joinEqual(const IdList& idList) const {
-  IdList resIdList;
-  for (const auto& seqEid : idList.data_) {
+IdList_ IdList::joinEqual(IdList_ idList) const {
+  std::map<int, EidSequence> resIdList;
+  for (const auto& seqEid : idList->data_) {
     int sid = seqEid.first;
     if (data_.find(sid) != data_.end()) {
       EidSequence eidSeq;
@@ -53,12 +53,12 @@ IdList IdList::joinEqual(const IdList& idList) const {
       }
     }
   }
-  return resIdList;
+  return std::make_shared<IdList>(resIdList);
 }
 
-IdList IdList::joinLatter(const IdList& idList) const {
-  IdList resIdList;
-  for (const auto& seqEid : idList.data_) {
+IdList_ IdList::joinLatter(IdList_ idList) const {
+  std::map<int, EidSequence> resIdList;
+  for (const auto& seqEid : idList->data_) {
     int sid = seqEid.first;
     if (data_.find(sid) != data_.end()) {
       int minLeft = *(data_.at(sid).begin());
@@ -69,7 +69,7 @@ IdList IdList::joinLatter(const IdList& idList) const {
       }
     }
   }
-  return resIdList;
+  return std::make_shared<IdList>(resIdList);
 }
 
 int IdList::size() const {

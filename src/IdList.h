@@ -4,8 +4,12 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <memory>
+
+class IdList;
 
 using EidSequence = std::set<int>;
+using IdList_ = std::shared_ptr<IdList>;
 
 class IdList {
  public:
@@ -20,9 +24,9 @@ class IdList {
 
   std::map<int, EidSequence> getData() const;
 
-  IdList joinEqual(const IdList& idList) const;
+  IdList_ joinEqual(IdList_ idList) const;
 
-  IdList joinLatter(const IdList& idList) const;
+  IdList_ joinLatter(IdList_ idList) const;
 
   void clear();
 

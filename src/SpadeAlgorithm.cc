@@ -12,7 +12,7 @@ bool SpadeAlgorithm::loadData(SequenceData input) {
   return true;
 }
 
-bool SpadeAlgorithm::run(int min_support) {
+bool SpadeAlgorithm::run(int min_support) { 
   std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
   std::cout << "Run SPADE algorithm" << std::endl;
   min_support_ = min_support;

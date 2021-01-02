@@ -193,8 +193,8 @@ std::set<int> SequenceData::uniqueSingleItems() const {
   return unique_items;
 }
 
-IdList SequenceData::getSingleItemIdList(int item) const {
-  IdList idList;
+IdList_ SequenceData::getSingleItemIdList(int item) const {
+  std::map<int, EidSequence> idList;
   int sid = 0;
   for (const auto& v : data_) {
     EidSequence eidSeq{};
@@ -211,7 +211,7 @@ IdList SequenceData::getSingleItemIdList(int item) const {
     }
     ++sid;
   }
-  return idList;
+  return std::make_shared<IdList>(idList);
 }
 
 std::vector<EquivalenceClass> SequenceData::getSingleFrequentItemClasses(int minSupport) const {
@@ -253,7 +253,7 @@ void SequenceData::updateSeqClassMap(std::map<Sequence, EquivalenceClass>& seqCl
   } else {
     seqClassMap.insert(std::pair<Sequence, EquivalenceClass>(
       seq,
-      EquivalenceClass(seq, IdList(sid, eid))
+      EquivalenceClass(seq, std::make_shared<IdList>(sid, eid))
     ));
   }
 }

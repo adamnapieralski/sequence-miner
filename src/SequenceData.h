@@ -42,7 +42,7 @@ class SequenceData {
   void push_back(const Sequence &seq);
 
   std::set<int> uniqueSingleItems() const;
-  IdList getSingleItemIdList(int item) const;
+  IdList_ getSingleItemIdList(int item) const;
   std::vector<EquivalenceClass> getSingleFrequentItemClasses(int minSupport) const;
 
   void updateSeqClassMap(std::map<Sequence, EquivalenceClass>& seqClassMap, Sequence& seq, int sid, int eid) const;
