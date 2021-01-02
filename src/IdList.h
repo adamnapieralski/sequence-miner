@@ -14,6 +14,13 @@ using IdList_ = std::shared_ptr<IdList>;
 class IdList {
  public:
   IdList() = default;
+
+  IdList(const IdList &) = delete;
+  IdList &operator=(const IdList &) = delete;
+
+  IdList(IdList &&) = default;
+  IdList &operator=(IdList &&) = default;
+
   IdList(const std::map<int, EidSequence> &);
   IdList(int sid, int eid);
 

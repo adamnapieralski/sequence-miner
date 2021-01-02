@@ -15,6 +15,13 @@ using EquivalenceClass_ = std::shared_ptr<EquivalenceClass>;
 class EquivalenceClass {
  public:
   EquivalenceClass() = default;
+
+  EquivalenceClass(const EquivalenceClass &) = delete;
+  EquivalenceClass &operator=(const EquivalenceClass &) = delete;
+
+  EquivalenceClass(EquivalenceClass &&) = default;
+  EquivalenceClass &operator=(EquivalenceClass &&) = default;
+
   EquivalenceClass(const Sequence& seq);
   EquivalenceClass(const Sequence& seq, IdList_ idList);
 
@@ -25,27 +32,26 @@ class EquivalenceClass {
   Sequence getSequence() const;
   IdList_ getIdList() const;
 
-  void addMember(const EquivalenceClass& member);
-  void setMembers(const std::vector<EquivalenceClass>& members);
+  void addMember(EquivalenceClass_ member);
+  void setMembers(std::vector<EquivalenceClass_> members);
 
-  std::vector<EquivalenceClass>& getMembers();
+  std::vector<EquivalenceClass_> getMembers();
   int getMembersNum() const;
 
   int support() const;
 
-  bool isParentOf(const EquivalenceClass& eq) const;
+  bool isParentOf(EquivalenceClass_ eq) const;
 
   std::pair<Sequence, Sequence> getPrefixSuffixSeqParts() const;
 
   Sequence getLastSeqPair() const;
 
-  void joinIdList(const EquivalenceClass& eq1, const EquivalenceClass& eq2);
+  void joinIdList(EquivalenceClass_ eq1, EquivalenceClass_ eq2);
   
   void print() const;
 
  private:
   Sequence seq_;
   IdList_ idList_;
-  std::vector<EquivalenceClass> members_;
-  EquivalenceClass_ child;
+  std::vector<EquivalenceClass_> members_;
 };

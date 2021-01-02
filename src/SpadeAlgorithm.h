@@ -10,16 +10,14 @@ class SpadeAlgorithm : public Algorithm {
   bool loadData(SequenceData input) override;
   bool run(int min_support) override;
 
-  void pushToFinalSequences(const std::vector<EquivalenceClass>& eqClasses);
-  void enumerateFrequentSequences(EquivalenceClass& eq);
+  void pushToFinalSequences(const std::vector<EquivalenceClass_>& eqClasses);
+  void enumerateFrequentSequences(EquivalenceClass_ eq);
 
-  void insertClassByPrefix(const EquivalenceClass& eq, std::vector<EquivalenceClass>& parents) const;
-  void insertClassByPrefix(const EquivalenceClass& eq, EquivalenceClass& parent1, EquivalenceClass& parent2) const;
+  void insertClassByPrefix(EquivalenceClass_ eq, std::vector<EquivalenceClass_>& parents) const;
+  void insertClassByPrefix(EquivalenceClass_ eq, EquivalenceClass_ parent1, EquivalenceClass_ parent2) const;
 
-  std::vector<EquivalenceClass> generateCandidates(const EquivalenceClass& eq1, const EquivalenceClass& eq2) const;
-  std::vector<EquivalenceClass> generateJoinedCandidates(const EquivalenceClass& eq1, const EquivalenceClass& eq2) const;
-
-
+  std::vector<EquivalenceClass_> generateCandidates(EquivalenceClass_ eq1, EquivalenceClass_ eq2) const;
+  std::vector<EquivalenceClass_> generateJoinedCandidates(EquivalenceClass_ eq1, EquivalenceClass_ eq2) const;
 
  private:
   SequenceData input_;

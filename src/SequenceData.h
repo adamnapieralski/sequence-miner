@@ -43,10 +43,10 @@ class SequenceData {
 
   std::set<int> uniqueSingleItems() const;
   IdList_ getSingleItemIdList(int item) const;
-  std::vector<EquivalenceClass> getSingleFrequentItemClasses(int minSupport) const;
+  std::vector<EquivalenceClass_> getSingleFrequentItemClasses(int minSupport) const;
 
-  void updateSeqClassMap(std::map<Sequence, EquivalenceClass>& seqClassMap, Sequence& seq, int sid, int eid) const;
-  std::vector<EquivalenceClass> getDoubleFrequentItemClasses(int minSupport) const;
+  void updateSeqClassMap(std::map<Sequence, EquivalenceClass_>& seqClassMap, Sequence& seq, int sid, int eid) const;
+  std::vector<EquivalenceClass_> getDoubleFrequentItemClasses(int minSupport) const;
 
  private:
   std::vector<Sequence> data_;

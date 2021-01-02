@@ -37,28 +37,24 @@ IdList_ EquivalenceClass::getIdList() const {
 }
 
 
-void EquivalenceClass::addMember(const EquivalenceClass& member) {
+void EquivalenceClass::addMember(EquivalenceClass_ member) {
   members_.push_back(member);
 }
 
-void EquivalenceClass::setMembers(const std::vector<EquivalenceClass>& members) {
+void EquivalenceClass::setMembers(std::vector<EquivalenceClass_> members) {
   members_ = members;
 }
 
-std::vector<EquivalenceClass>& EquivalenceClass::getMembers() {
+std::vector<EquivalenceClass_> EquivalenceClass::getMembers() {
   return members_;
 }
-
-int EquivalenceClass::getMembersNum() const {
-    return members_.size();
-  }
 
 int EquivalenceClass::support() const {
   return idList_->size();
 }
 
-bool EquivalenceClass::isParentOf(const EquivalenceClass& eq) const {
-  return std::equal(seq_.begin(), seq_.end(), eq.getSequence().begin());
+bool EquivalenceClass::isParentOf(EquivalenceClass_ eq) const {
+  return std::equal(seq_.begin(), seq_.end(), eq->getSequence().begin());
 }
 
 Sequence EquivalenceClass::getLastSeqPair() const {
@@ -101,39 +97,39 @@ std::pair<Sequence, Sequence> EquivalenceClass::getPrefixSuffixSeqParts() const 
 }
 
 
-void EquivalenceClass::joinIdList(const EquivalenceClass& eq1, const EquivalenceClass& eq2) {
+void EquivalenceClass::joinIdList(EquivalenceClass_ eq1, EquivalenceClass_ eq2) {
   auto lastPair = getLastSeqPair();
-  auto presuf1 = eq1.getPrefixSuffixSeqParts();
-  auto presuf2 = eq2.getPrefixSuffixSeqParts();
+  auto presuf1 = eq1->getPrefixSuffixSeqParts();
+  auto presuf2 = eq2->getPrefixSuffixSeqParts();
 
   // PSS
   if (lastPair.size() == 2) {
-    idList_ = eq1.idList_->joinEqual(eq2.idList_);
+    idList_ = eq1->idList_->joinEqual(eq2->idList_);
   }
   // P -> SS
   else if (lastPair.size() == 3 && lastPair[0] == -1) {
-    idList_ = eq1.idList_->joinEqual(eq2.idList_);
+    idList_ = eq1->idList_->joinEqual(eq2->idList_);
   }
   // PS -> S
   else if (lastPair.size() == 3 && lastPair[1] == -1) {
     // PS1 -> S2
     if (presuf1.second.size() == 1 && presuf2.second.size() == 2 && presuf2.second[0] == -1) {
-      idList_ = eq1.idList_->joinLatter(eq2.idList_);
+      idList_ = eq1->idList_->joinLatter(eq2->idList_);
     }
     // PS2 -> S1
     else if (presuf2.second.size() == 1 && presuf1.second.size() == 2) {
-      idList_ = eq2.idList_->joinLatter(eq1.idList_);
+      idList_ = eq2->idList_->joinLatter(eq1->idList_);
     }
   }
   // P -> S -> S
   else if (lastPair.size() == 4 && presuf1.second.size() == 2 && presuf2.second.size() == 2) {
     // P -> S1 -> S2
     if (lastPair[1] == presuf1.second[1]) {
-      idList_ = eq1.idList_->joinLatter(eq2.idList_);
+      idList_ = eq1->idList_->joinLatter(eq2->idList_);
     }
     // P -> S2 -> S1
     else if (lastPair[1] == presuf2.second[1]) {
-      idList_ = eq2.idList_->joinLatter(eq1.idList_);
+      idList_ = eq2->idList_->joinLatter(eq1->idList_);
     }
   }
   else {
@@ -154,7 +150,7 @@ void EquivalenceClass::print() const {
 
   std::cout << "Members:" << std::endl;
   for (const auto& m : members_) {
-    for (const auto& s : m.getSequence()) {
+    for (const auto& s : m->getSequence()) {
       std::cout << s << " ";
     }
     std::cout << std::endl;
