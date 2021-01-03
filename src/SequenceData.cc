@@ -226,7 +226,7 @@ std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(int mi
     std::execution::par,
     singleItemClasses.begin(),
     singleItemClasses.end(),
-    [=] (auto& singleClass) {
+    [&] (auto& singleClass) {
       singleClass->setIdList(
         getSingleItemIdList(singleClass->getSequence().at(0))
       );
@@ -284,7 +284,6 @@ std::vector<EquivalenceClass_> SequenceData::getDoubleFrequentItemClasses(int mi
   }
 
   for (const auto& p : seqClassMap) {
-    // p.second.print();
     if (p.second->support() > minSupport) {
       doubleItemClasses.push_back(p.second);
     }

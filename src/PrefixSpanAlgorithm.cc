@@ -4,6 +4,7 @@
 #include <execution>
 #include <sstream>
 #include <unordered_map>
+#include <chrono>
 
 #include "SequenceData.h"
 #include "Algorithm.h"
@@ -21,6 +22,8 @@ bool PrefixSpanAlgorithm::loadData(SequenceData input) {
 }
 
 bool PrefixSpanAlgorithm::run(int min_support) {
+  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
   std::cout << "Run PrefixSpan algorithm" << std::endl;
 
   min_support_ = min_support;
@@ -36,6 +39,9 @@ bool PrefixSpanAlgorithm::run(int min_support) {
   std::for_each(
       std::execution::par, sequences.begin(), sequences.end(),
       [=](const auto &item) { recursiveSolve(item.first, item.second); });
+
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+  std::cout << "Execution time = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 
   printFinalSequences();
 

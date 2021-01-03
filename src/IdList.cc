@@ -23,7 +23,6 @@ void IdList::insert(const std::pair<int, EidSequence>& seqEids) {
   data_.insert(seqEids);
 }
 
-
 void IdList::addEidToSeq(int sid, int eid) {
   if (data_.find(sid) != data_.end()) {
     data_[sid].insert(eid);
@@ -36,7 +35,8 @@ std::map<int, EidSequence> IdList::getData() const {
   return data_;
 }
 
-
+// perform equal join on this and argument idList and return it
+// happends when child candidate ends with an event (...AB)
 IdList_ IdList::joinEqual(const IdList_& idList) const {
   std::map<int, EidSequence> resIdList;
   for (const auto& seqEid : idList->data_) {
@@ -56,6 +56,9 @@ IdList_ IdList::joinEqual(const IdList_& idList) const {
   return std::make_shared<IdList>(resIdList);
 }
 
+// perform latter join on this and argument idList and return it
+// (in Zaki's paper described as temporal relationship)
+// happends when child candidate ends with a sequence (...A->B)
 IdList_ IdList::joinLatter(const IdList_& idList) const {
   std::map<int, EidSequence> resIdList;
   for (const auto& seqEid : idList->data_) {
@@ -75,7 +78,6 @@ IdList_ IdList::joinLatter(const IdList_& idList) const {
 int IdList::size() const {
   return data_.size();
 }
-
 
 void IdList::print() const {
   for (const auto& pair : data_) {

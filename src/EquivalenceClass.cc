@@ -53,10 +53,13 @@ int EquivalenceClass::support() const {
   return idList_->size();
 }
 
+// is "parent" (or predecessor) if this sequence is a part of eq's sequence from the beginning
 bool EquivalenceClass::isParentOf(const EquivalenceClass_& eq) const {
   return std::equal(seq_.begin(), seq_.end(), eq->getSequence().begin());
 }
 
+// returns two last atoms with seperators (=-1) between them and to the left, if applicable
+// {[A, B], [-1, A, B], [A, -1, B], [-1, A, -1, B]}
 Sequence EquivalenceClass::getLastSeqPair() const {
   int rStartId = 1;
   bool found = false;
@@ -80,7 +83,8 @@ Sequence EquivalenceClass::getLastSeqPair() const {
   return Sequence(seq_.end() - rStartId, seq_.end());
 }
 
-
+// returns pair of <prefix, suffix>, where suffix would be last atom with left separator (=-1) if applicable
+// suffix = {[-1, S], [S]}
 std::pair<Sequence, Sequence> EquivalenceClass::getPrefixSuffixSeqParts() const {
   if (seq_.size() > 1) {
     int split = 1;
@@ -96,7 +100,7 @@ std::pair<Sequence, Sequence> EquivalenceClass::getPrefixSuffixSeqParts() const 
   throw std::out_of_range("Empty sequence");
 }
 
-
+// compute and set this idList based on parents idLists
 void EquivalenceClass::joinIdList(const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) {
   auto lastPair = getLastSeqPair();
   auto presuf1 = eq1->getPrefixSuffixSeqParts();
@@ -137,10 +141,7 @@ void EquivalenceClass::joinIdList(const EquivalenceClass_& eq1, const Equivalenc
   }
 }
 
-
-
 void EquivalenceClass::print() const {
-
   std::cout << "Equivalence class for seq:\t";
   for (const auto& s : seq_) {
     std::cout << s << " ";
