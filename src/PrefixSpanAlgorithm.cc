@@ -106,13 +106,16 @@ std::vector<int> PrefixSpanAlgorithm::frequentItems(
 
     std::set<int> items;
 
-    if (seq.front() != -1) {
-      items.insert(-1 * seq.front());
+    // if prefix is a part of the first element
+    auto it = seq.begin();
+    while (it != seq.end() && *it != -1) {
+      items.insert(-1 * (*it));
+      ++it;
     }
 
     // If item is negative, it means it's a part of the element that also
     // contains the prefix
-    for (auto it = seq.begin() + 1; it != seq.end(); ++it) {
+    for (; it != seq.end(); ++it) {
       if (*it != -1) {
         if (*(it - 1) == prefix.back()) {
           items.insert(-1 * (*it));
