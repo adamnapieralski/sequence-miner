@@ -192,3 +192,102 @@ std::set<int> SequenceData::uniqueSingleItems() const {
 
   return unique_items;
 }
+
+IdList_ SequenceData::getSingleItemIdList(int item) const {
+  std::map<int, EidSequence> idList;
+  int sid = 0;
+  for (const auto& v : data_) {
+    EidSequence eidSeq{};
+    int eid = 0;
+    for (auto s : v) {
+      if (s == -1) {
+        ++eid;
+      } else if (s == item) {
+        eidSeq.insert(eid);
+      }
+    }
+    if (eidSeq.size() > 0) {
+      idList.insert(std::pair<int, EidSequence>(sid, eidSeq));
+    }
+    ++sid;
+  }
+  return std::make_shared<IdList>(idList);
+}
+
+std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(int minSupport) const {
+  auto items = uniqueSingleItems();
+  std::vector<EquivalenceClass_> singleItemClasses;
+  
+  for (const auto& item : items) {
+    singleItemClasses.push_back(std::make_shared<EquivalenceClass>(Sequence({ item })));
+  }
+
+  std::for_each(
+    std::execution::par,
+    singleItemClasses.begin(),
+    singleItemClasses.end(),
+    [&] (auto& singleClass) {
+      singleClass->setIdList(
+        getSingleItemIdList(singleClass->getSequence().at(0))
+      );
+    }
+  );
+
+  // remove infrequent classes
+  singleItemClasses.erase(
+    std::remove_if(std::execution::par, singleItemClasses.begin(), singleItemClasses.end(),
+      [=] (const auto& singleClass) {
+        return singleClass->support() <= minSupport;
+      }
+    ),
+    singleItemClasses.end()
+  );
+
+  return singleItemClasses;
+}
+
+void SequenceData::updateSeqClassMap(std::map<Sequence, EquivalenceClass_>& seqClassMap, Sequence& seq, int sid, int eid) const {
+  // if sequence already exists
+  if (seqClassMap.find(seq) != seqClassMap.end()) {
+    seqClassMap[seq]->addEidToSeqIdList(sid, eid);
+  } else {
+    seqClassMap.insert(std::pair<Sequence, EquivalenceClass_>(
+      seq,
+      std::make_shared<EquivalenceClass>(seq, std::make_shared<IdList>(sid, eid))
+    ));
+  }
+}
+
+std::vector<EquivalenceClass_> SequenceData::getDoubleFrequentItemClasses(int minSupport) const {
+  std::map<Sequence, EquivalenceClass_> seqClassMap;
+  std::vector<EquivalenceClass_> doubleItemClasses;
+
+  for (int sid = 0; sid < data_.size(); ++sid) {
+    int eid = 0;
+    for (int itId = 0; itId < data_[sid].size(); ++itId) {
+      if (data_[sid][itId] == -1) {
+        ++eid;
+        continue;
+      }
+      int eid2 = eid;
+      for (int itId2 = itId + 1; itId2 < data_[sid].size(); ++itId2) {
+        if (data_[sid][itId2] == -1) {
+          ++eid2;
+          continue;
+        }
+        Sequence seq{ data_[sid][itId] };
+        if (eid2 > eid) seq.push_back(-1);
+        seq.push_back(data_[sid][itId2]);
+        updateSeqClassMap(seqClassMap, seq, sid, eid2);
+      }
+    }
+  }
+
+  for (const auto& p : seqClassMap) {
+    if (p.second->support() > minSupport) {
+      doubleItemClasses.push_back(p.second);
+    }
+  }
+
+  return doubleItemClasses;
+}

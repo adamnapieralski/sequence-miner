@@ -4,6 +4,9 @@ set(LIB_NAME sequence_miner_lib)
 set(SRC_LIST    
     AlgorithmManager.cc    
     SequenceData.cc
+    IdList.cc
+    EquivalenceClass.cc
+    Algorithm.cc
     SpadeAlgorithm.cc
     PrefixSpanAlgorithm.cc
     Parameters.cc

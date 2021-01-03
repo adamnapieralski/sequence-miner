@@ -1,6 +1,5 @@
 #include <iostream>
 #include <map>
-#include <mutex>
 
 #include "Algorithm.h"
 
@@ -19,7 +18,6 @@ class PrefixSpanAlgorithm : public Algorithm {
   /// Split input data into projected datasets for each prefix.
   std::map<Prefix, SequenceData> partitionAllSequences();
   void printSequences(const std::map<Prefix, SequenceData> &sequences) const;
-  void printFinalSequences() const;
 
   /// Get fequent items in the given dataset. Prefix is needed to properly
   /// identify sufixes.
@@ -32,9 +30,4 @@ class PrefixSpanAlgorithm : public Algorithm {
 
   void appendFinalSequences(const Prefix &prefix,
                             const std::vector<int> &items);
-
-  int min_support_{1};
-  SequenceData input_;
-  std::vector<Sequence> final_sequences_;
-  mutable std::mutex final_sequences_mutex_;
 };

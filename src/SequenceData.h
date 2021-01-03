@@ -4,8 +4,9 @@
 #include <string>
 #include <vector>
 
+#include "EquivalenceClass.h"
+
 enum class DataType { t_int, t_char };
-using Sequence = std::vector<int>;
 
 using iterator = std::vector<std::vector<int>>::iterator;
 using const_iterator = std::vector<std::vector<int>>::const_iterator;
@@ -41,6 +42,11 @@ class SequenceData {
   void push_back(const Sequence &seq);
 
   std::set<int> uniqueSingleItems() const;
+  IdList_ getSingleItemIdList(int item) const;
+  std::vector<EquivalenceClass_> getSingleFrequentItemClasses(int minSupport) const;
+
+  void updateSeqClassMap(std::map<Sequence, EquivalenceClass_>& seqClassMap, Sequence& seq, int sid, int eid) const;
+  std::vector<EquivalenceClass_> getDoubleFrequentItemClasses(int minSupport) const;
 
  private:
   std::vector<Sequence> data_;

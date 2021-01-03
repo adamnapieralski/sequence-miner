@@ -4,8 +4,10 @@
 #include <execution>
 #include <sstream>
 #include <unordered_map>
+#include <chrono>
 
 #include "SequenceData.h"
+#include "Algorithm.h"
 #include "utils.hpp"
 
 namespace {
@@ -20,6 +22,8 @@ bool PrefixSpanAlgorithm::loadData(SequenceData input) {
 }
 
 bool PrefixSpanAlgorithm::run(int min_support) {
+  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
   std::cout << "Run PrefixSpan algorithm" << std::endl;
 
   min_support_ = min_support;
@@ -35,6 +39,9 @@ bool PrefixSpanAlgorithm::run(int min_support) {
   std::for_each(
       std::execution::par, sequences.begin(), sequences.end(),
       [=](const auto &item) { recursiveSolve(item.first, item.second); });
+
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+  std::cout << "Execution time = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 
   printFinalSequences();
 
@@ -84,15 +91,6 @@ void PrefixSpanAlgorithm::printSequences(
     it->second.printData();
   }
   std::cout << "********************************************" << std::endl;
-}
-
-void PrefixSpanAlgorithm::printFinalSequences() const {
-  std::cout << "Final sequences: ";
-  std::lock_guard<std::mutex> lock(final_sequences_mutex_);
-  for (const auto &seq : final_sequences_) {
-    std::cout << utils::print(seq) << " ";
-  }
-  std::cout << std::endl;
 }
 
 std::vector<int> PrefixSpanAlgorithm::frequentItems(
