@@ -23,30 +23,30 @@ class EquivalenceClass {
   EquivalenceClass &operator=(EquivalenceClass &&) = default;
 
   EquivalenceClass(const Sequence& seq);
-  EquivalenceClass(const Sequence& seq, IdList_ idList);
+  EquivalenceClass(const Sequence& seq, const IdList_& idList);
 
-  void setIdList(IdList_ idList);
-  void insertToIdList(const std::pair<int, EidSequence>);
+  void setIdList(const IdList_& idList);
+  void insertToIdList(const std::pair<int, EidSequence>& seqIds);
   void addEidToSeqIdList(int sid, int eid);
 
   Sequence getSequence() const;
   IdList_ getIdList() const;
 
-  void addMember(EquivalenceClass_ member);
-  void setMembers(std::vector<EquivalenceClass_> members);
+  void addMember(const EquivalenceClass_& member);
+  void setMembers(const std::vector<EquivalenceClass_>& members);
 
-  std::vector<EquivalenceClass_> getMembers();
+  std::vector<EquivalenceClass_> getMembers() const;
   int getMembersNum() const;
 
   int support() const;
 
-  bool isParentOf(EquivalenceClass_ eq) const;
+  bool isParentOf(const EquivalenceClass_& eq) const;
 
   std::pair<Sequence, Sequence> getPrefixSuffixSeqParts() const;
 
   Sequence getLastSeqPair() const;
 
-  void joinIdList(EquivalenceClass_ eq1, EquivalenceClass_ eq2);
+  void joinIdList(const EquivalenceClass_& eq1, const EquivalenceClass_& eq2);
   
   void print() const;
 

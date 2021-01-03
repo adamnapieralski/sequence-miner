@@ -19,7 +19,7 @@ IdList::IdList(int sid, int eid) {
   data_.insert(std::pair<int, EidSequence>(sid, EidSequence({ eid })));
 }
 
-void IdList::insert(const std::pair<int, EidSequence> seqEids) {
+void IdList::insert(const std::pair<int, EidSequence>& seqEids) {
   data_.insert(seqEids);
 }
 
@@ -37,7 +37,7 @@ std::map<int, EidSequence> IdList::getData() const {
 }
 
 
-IdList_ IdList::joinEqual(IdList_ idList) const {
+IdList_ IdList::joinEqual(const IdList_& idList) const {
   std::map<int, EidSequence> resIdList;
   for (const auto& seqEid : idList->data_) {
     int sid = seqEid.first;
@@ -56,7 +56,7 @@ IdList_ IdList::joinEqual(IdList_ idList) const {
   return std::make_shared<IdList>(resIdList);
 }
 
-IdList_ IdList::joinLatter(IdList_ idList) const {
+IdList_ IdList::joinLatter(const IdList_& idList) const {
   std::map<int, EidSequence> resIdList;
   for (const auto& seqEid : idList->data_) {
     int sid = seqEid.first;

@@ -13,14 +13,14 @@
 
 EquivalenceClass::EquivalenceClass(const Sequence& seq) : seq_{seq} {}
 
-EquivalenceClass::EquivalenceClass(const Sequence& seq, IdList_ idList) :
+EquivalenceClass::EquivalenceClass(const Sequence& seq, const IdList_& idList) :
   seq_{seq}, idList_{idList} {}
 
-void EquivalenceClass::setIdList(IdList_ idList) {
+void EquivalenceClass::setIdList(const IdList_& idList) {
   idList_ = idList;
 }
 
-void EquivalenceClass::insertToIdList(const std::pair<int, EidSequence> seqIds) {
+void EquivalenceClass::insertToIdList(const std::pair<int, EidSequence>& seqIds) {
   idList_->insert(seqIds);
 }
 
@@ -37,15 +37,15 @@ IdList_ EquivalenceClass::getIdList() const {
 }
 
 
-void EquivalenceClass::addMember(EquivalenceClass_ member) {
+void EquivalenceClass::addMember(const EquivalenceClass_& member) {
   members_.push_back(member);
 }
 
-void EquivalenceClass::setMembers(std::vector<EquivalenceClass_> members) {
+void EquivalenceClass::setMembers(const std::vector<EquivalenceClass_>& members) {
   members_ = members;
 }
 
-std::vector<EquivalenceClass_> EquivalenceClass::getMembers() {
+std::vector<EquivalenceClass_> EquivalenceClass::getMembers() const {
   return members_;
 }
 
@@ -53,7 +53,7 @@ int EquivalenceClass::support() const {
   return idList_->size();
 }
 
-bool EquivalenceClass::isParentOf(EquivalenceClass_ eq) const {
+bool EquivalenceClass::isParentOf(const EquivalenceClass_& eq) const {
   return std::equal(seq_.begin(), seq_.end(), eq->getSequence().begin());
 }
 
@@ -97,7 +97,7 @@ std::pair<Sequence, Sequence> EquivalenceClass::getPrefixSuffixSeqParts() const 
 }
 
 
-void EquivalenceClass::joinIdList(EquivalenceClass_ eq1, EquivalenceClass_ eq2) {
+void EquivalenceClass::joinIdList(const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) {
   auto lastPair = getLastSeqPair();
   auto presuf1 = eq1->getPrefixSuffixSeqParts();
   auto presuf2 = eq2->getPrefixSuffixSeqParts();

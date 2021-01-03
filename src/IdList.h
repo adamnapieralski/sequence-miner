@@ -21,19 +21,19 @@ class IdList {
   IdList(IdList &&) = default;
   IdList &operator=(IdList &&) = default;
 
-  IdList(const std::map<int, EidSequence> &);
+  IdList(const std::map<int, EidSequence>& data);
   IdList(int sid, int eid);
 
-  void insert(const std::pair<int, EidSequence>);
+  void insert(const std::pair<int, EidSequence>& seqEids);
   void addEidToSeq(int sid, int eid);
 
   int size() const;
 
   std::map<int, EidSequence> getData() const;
 
-  IdList_ joinEqual(IdList_ idList) const;
+  IdList_ joinEqual(const IdList_& idList) const;
 
-  IdList_ joinLatter(IdList_ idList) const;
+  IdList_ joinLatter(const IdList_& idList) const;
 
   void clear();
 

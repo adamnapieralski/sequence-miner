@@ -47,19 +47,13 @@ bool SpadeAlgorithm::run(int min_support) {
   // root->setMembers(members);
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
-
-  std::cout << "FINISHED" << std::endl;
-
-
-  // pushToFinalSequences(frequentSingleItems);
-  // pushToFinalSequences(frequentDoubleItems);
+  std::cout << "Execution time = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 
   printFinalSequences();
   return true;
 }
 
-void SpadeAlgorithm::enumerateFrequentSequences(EquivalenceClass_ eq) {
+void SpadeAlgorithm::enumerateFrequentSequences(EquivalenceClass_& eq) {
   std::cout << "Enumerating" << std::endl << std::endl;
 
   eq->print();
@@ -100,7 +94,7 @@ void SpadeAlgorithm::enumerateFrequentSequences(EquivalenceClass_ eq) {
   }
 }
 
-void SpadeAlgorithm::insertClassByPrefix(EquivalenceClass_ eq, std::vector<EquivalenceClass_>& parents) const {
+void SpadeAlgorithm::insertClassByPrefix(const EquivalenceClass_& eq, std::vector<EquivalenceClass_>& parents) const {
   for (auto &p : parents) {
     if (p->isParentOf(eq)) {
       p->addMember(eq);
@@ -111,7 +105,7 @@ void SpadeAlgorithm::insertClassByPrefix(EquivalenceClass_ eq, std::vector<Equiv
   throw std::out_of_range("No parent with matching prefix");
 }
 
-void SpadeAlgorithm::insertClassByPrefix(EquivalenceClass_ eq, EquivalenceClass_ parent1, EquivalenceClass_ parent2) const {
+void SpadeAlgorithm::insertClassByPrefix(const EquivalenceClass_& eq, EquivalenceClass_& parent1, EquivalenceClass_& parent2) const {
   if (parent1->isParentOf(eq)) {
     parent1->addMember(eq);
   } else if (parent2->isParentOf(eq)) {
@@ -122,7 +116,7 @@ void SpadeAlgorithm::insertClassByPrefix(EquivalenceClass_ eq, EquivalenceClass_
   }
 }
 
-std::vector<EquivalenceClass_> SpadeAlgorithm::generateCandidates(EquivalenceClass_ eq1, EquivalenceClass_ eq2) const {
+std::vector<EquivalenceClass_> SpadeAlgorithm::generateCandidates(const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) const {
   auto presuf1 = eq1->getPrefixSuffixSeqParts();
   auto presuf2 = eq2->getPrefixSuffixSeqParts();
 
@@ -205,7 +199,7 @@ std::vector<EquivalenceClass_> SpadeAlgorithm::generateCandidates(EquivalenceCla
   return candidates;
 }
 
-std::vector<EquivalenceClass_> SpadeAlgorithm::generateJoinedCandidates(EquivalenceClass_ eq1, EquivalenceClass_ eq2) const {
+std::vector<EquivalenceClass_> SpadeAlgorithm::generateJoinedCandidates(const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) const {
   auto candidates = generateCandidates(eq1, eq2);
   for (auto& candidate : candidates) {
     candidate->joinIdList(eq1, eq2);
