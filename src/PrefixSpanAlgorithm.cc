@@ -10,20 +10,20 @@
 #include "SequenceData.h"
 #include "utils.hpp"
 
+using time_point = std::chrono::steady_clock::time_point;
+
 namespace {
 const Prefix null_prefix{0};
-}
+}  // namespace
 
 bool PrefixSpanAlgorithm::loadData(SequenceData input) {
   std::cout << "Load data for PrefixSpan algorithm" << std::endl;
-  // input.printData();
   input_ = std::move(input);
   return true;
 }
 
 bool PrefixSpanAlgorithm::run(int min_support) {
-  std::chrono::steady_clock::time_point begin =
-      std::chrono::steady_clock::now();
+  time_point begin = std::chrono::steady_clock::now();
 
   std::cout << "Run PrefixSpan algorithm" << std::endl;
 
@@ -32,53 +32,52 @@ bool PrefixSpanAlgorithm::run(int min_support) {
   input_.removeInfrequentItems(min_support_);
   // input_.printData();
 
-  auto sequences = partitionAllSequences();
+  const auto sequences = partitionAllSequences();
 
   // no longer needed
   input_.clear();
 
   std::for_each(
-      std::execution::par, sequences.begin(), sequences.end(),
+      std::execution::par, sequences.cbegin(), sequences.cend(),
       [=](const auto &item) { recursiveSolve(item.first, item.second); });
 
-  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+  time_point end = std::chrono::steady_clock::now();
   std::cout << "Execution time = "
-            << std::chrono::duration_cast<std::chrono::microseconds>(end -
+            << std::chrono::duration_cast<std::chrono::milliseconds>(end -
                                                                      begin)
                    .count()
-            << "[µs]" << std::endl;
+            << " [ms]" << std::endl;
 
-  printFinalSequences();
+  // printFinalSequences();
+  std::cout << "Found " << final_sequences_.size() << " frequent sequences"
+            << std::endl;
 
   return true;
 }
 
 std::map<Prefix, SequenceData> PrefixSpanAlgorithm::partitionAllSequences() {
-  auto single_items = input_.uniqueSingleItems();
+  const auto single_items = input_.uniqueSingleItems();
   // std::cout << "unique items: " << utils::print(single_items) << std::endl;
 
   std::map<Prefix, SequenceData> sequences;
 
-  for (auto item : single_items) {
-    final_sequences_.push_back(Prefix{item});
-  }
-
   // prepare prefixes
   std::map<int, Prefix> prefixes;
   for (auto i : single_items) {
+    final_sequences_.emplace_back(Prefix{i});
     prefixes[i] = Prefix{i};
   }
 
   // The input is devided into subsets. Each subset contains sequences
   // that begin with the given item.
-  for (Sequence &seq : input_) {
+  for (const Sequence &seq : input_) {
     if (seq.empty()) {
       continue;
     }
     for (auto pref : single_items) {
-      for (auto it = seq.begin(); it != seq.end(); ++it) {
-        if (*it == pref && it + 1 != seq.end()) {
-          sequences[prefixes[pref]].push_back(Sequence(it + 1, seq.end()));
+      for (auto it = seq.cbegin(); it != seq.cend(); ++it) {
+        if (*it == pref && it + 1 != seq.cend()) {
+          sequences[prefixes[pref]].emplace_back(it + 1, seq.end());
           break;
         }
       }
@@ -89,11 +88,11 @@ std::map<Prefix, SequenceData> PrefixSpanAlgorithm::partitionAllSequences() {
 }
 
 void PrefixSpanAlgorithm::printSequences(
-    const std::map<Prefix, SequenceData> &sequences) const {
-  for (auto it = sequences.begin(); it != sequences.end(); ++it) {
+    const std::map<Prefix, SequenceData> &sequences) {
+  for (const auto &sequence : sequences) {
     std::cout << "********************************************" << std::endl;
-    std::cout << "sequence " << it->first[0] << std::endl;
-    it->second.printData();
+    std::cout << "sequence " << sequence.first[0] << std::endl;
+    sequence.second.printData();
   }
   std::cout << "********************************************" << std::endl;
 }
@@ -134,9 +133,9 @@ std::vector<int> PrefixSpanAlgorithm::frequentItems(
   }
 
   std::vector<int> infrequent_items;
-  for (auto it = counter.begin(); it != counter.end(); ++it) {
-    if (it->second > min_support_) {
-      infrequent_items.push_back(it->first);
+  for (const auto &it : counter) {
+    if (it.second > min_support_) {
+      infrequent_items.push_back(it.first);
     }
   }
   return infrequent_items;
@@ -146,18 +145,18 @@ void PrefixSpanAlgorithm::recursiveSolve(const Prefix &prefix,
                                          const SequenceData &data) {
   // std::cout <<
   // "**************************************************************"
-  // << std::endl;
+  //           << std::endl;
   // std::cout << "recursiveSolve for " << utils::print(prefix) << std::endl;
 
   // std::cout << "Projected data " << std::endl;
   // data.printData();
 
-  auto freq_items = frequentItems(prefix, data);
+  const auto freq_items = frequentItems(prefix, data);
 
   // std::cout << "frequent items: " << utils::print(freq_items) << std::endl;
 
   if (freq_items.empty()) {
-    // std::cout << "no freq items, returning" << std::endl;
+    //   std::cout << "no freq items, returning" << std::endl;
     return;
   }
 
@@ -172,22 +171,28 @@ void PrefixSpanAlgorithm::recursiveSolve(const Prefix &prefix,
       if (seq.empty()) {
         continue;
       }
-      for (auto it = seq.begin(); it != seq.end(); ++it) {
-        if (*it == abs(pref) && it + 1 != seq.end()) {
+
+      bool first_element{true};
+
+      for (auto it = seq.cbegin(); it != seq.cend(); ++it) {
+        if (*it == abs(pref) && it + 1 != seq.cend()) {
           // Additional conditions to cope with elements that contain multiple
           // items.
 
-          if (it == seq.begin() && pref > 0) {
+          if (it == seq.cbegin() && pref > 0) {
             continue;
           }
 
-          if (it > seq.begin() && pref < 0 && prefix.size() > 0 &&
-              *(it - 1) != prefix[prefix.size() - 1]) {
+          if (it > seq.cbegin() && pref < 0 && prefix.empty() &&
+              !first_element) {
             continue;
           }
 
-          projectedData.push_back(Sequence(it + 1, seq.end()));
+          projectedData.emplace_back(it + 1, seq.cend());
           break;
+        }
+        if (*it == -1) {
+          first_element = false;
         }
       }
     }

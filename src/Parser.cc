@@ -6,9 +6,9 @@
 
 #include "utils.hpp"
 
-SequenceMap parser::readCharDataNoSep(std::ifstream& f, char sep) {
-  int seq_id;
-  int time_id;
+SequenceMap parser::readCharDataNoSep(std::ifstream &f, char sep) {
+  int seq_id = 0;
+  int time_id = 0;
 
   SequenceMap seqs;
 
@@ -26,7 +26,7 @@ SequenceMap parser::readCharDataNoSep(std::ifstream& f, char sep) {
     std::string seq;
     ss >> seq;
 
-    auto& seq_item = seqs[seq_id];
+    auto &seq_item = seqs[seq_id];
     for (auto s : seq) {
       auto it = char_to_int.find(s);
       if (it == char_to_int.end()) {
@@ -46,7 +46,7 @@ SequenceMap parser::readCharDataNoSep(std::ifstream& f, char sep) {
   return seqs;
 }
 
-SequenceMap parser::readSpfm(std::ifstream& f, int limit) {
+SequenceMap parser::readSpfm(std::ifstream &f, int limit) {
   SequenceMap seqs;
 
   std::string line;
@@ -54,7 +54,7 @@ SequenceMap parser::readSpfm(std::ifstream& f, int limit) {
   int seq_id = 0;
 
   if (limit == -1) {
-    limit == std::numeric_limits<int>::max();
+    limit = std::numeric_limits<int>::max();
   }
 
   while (!f.eof() && --limit >= 0) {
@@ -62,7 +62,7 @@ SequenceMap parser::readSpfm(std::ifstream& f, int limit) {
 
     std::istringstream iss(line);
 
-    int val;
+    int val = 0;
     std::vector<int> v;
 
     while (iss >> val && val != -2) {

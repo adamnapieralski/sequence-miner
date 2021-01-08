@@ -39,6 +39,12 @@ class SequenceData {
   void printData() const;
 
   void setData(const std::vector<Sequence> &data);
+
+  template <class... Args>
+  void emplace_back(Args &&... args) {
+    data_.emplace_back(std::forward<Args>(args)...);
+  }
+
   void push_back(const Sequence &seq);
 
   std::set<int> uniqueSingleItems() const;

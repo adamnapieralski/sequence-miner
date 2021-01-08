@@ -16,8 +16,8 @@ namespace {
 
 std::vector<Sequence> mapValues(SequenceMap& map) {
   std::vector<Sequence> v;
-  for (auto it = map.begin(); it != map.end(); ++it) {
-    v.emplace_back(std::move(it->second));
+  for (auto & it : map) {
+    v.emplace_back(std::move(it.second));
   }
   return v;
 }
@@ -39,9 +39,9 @@ std::set<int> infrequentItems(const std::vector<Sequence>& data,
   }
 
   std::set<int> infrequent_items;
-  for (auto it = counter.begin(); it != counter.end(); ++it) {
-    if (it->second <= min_support) {
-      infrequent_items.insert(it->first);
+  for (auto & it : counter) {
+    if (it.second <= min_support) {
+      infrequent_items.insert(it.first);
     }
   }
 
@@ -63,7 +63,7 @@ SequenceData SequenceData::load(const std::string& input, char separator,
 
   SequenceMap seqs;
 
-  if (input.substr(input.find_last_of(".") + 1) == "spmf") {
+  if (input.substr(input.find_last_of('.') + 1) == "spmf") {
     seqs = parser::readSpfm(input_file, limit);
   } else if (seq_separator == char() and data_type == DataType::t_char) {
     seqs = parser::readCharDataNoSep(input_file, separator);
@@ -96,7 +96,7 @@ void SequenceData::clear() { data_.clear(); }
 int SequenceData::removeInfrequentItems(int min_support) {
   const auto items_to_delete = infrequentItems(data_, min_support);
 
-  std::cout << "Removing infrequent items: " << items_to_delete.size()
+  std::cout << "Removing " << items_to_delete.size() << " infrequent items"
             << std::endl;
   // for (auto item : items_to_delete) {
   //   std::cout << item << " ";
@@ -116,7 +116,7 @@ int SequenceData::removeInfrequentItems(int min_support) {
     }
 
     for (auto it = seq.begin() + 1; it != seq.end();) {
-      if (*(it - 1) == *it && *it == -1) {
+      if (*(it - 1) == -1 && *it == -1) {
         it = seq.erase(it);
       } else {
         ++it;
@@ -177,7 +177,7 @@ IdList_ SequenceData::getSingleItemIdList(int item) const {
         eidSeq.insert(eid);
       }
     }
-    if (eidSeq.size() > 0) {
+    if (!eidSeq.empty()) {
       idList.insert(std::pair<int, EidSequence>(sid, eidSeq));
     }
     ++sid;
@@ -190,12 +190,14 @@ std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(
   auto items = uniqueSingleItems();
   std::vector<EquivalenceClass_> singleItemClasses;
 
-  for (const auto& item : items) {
+  singleItemClasses.reserve(items.size());
+for (const auto& item : items) {
     singleItemClasses.push_back(
         std::make_shared<EquivalenceClass>(Sequence({item})));
   }
 
-  std::for_each(std::execution::par, singleItemClasses.begin(),
+
+  std::for_each(std::execution::seq, singleItemClasses.begin(),
                 singleItemClasses.end(), [&](auto& singleClass) {
                   singleClass->setIdList(
                       getSingleItemIdList(singleClass->getSequence().at(0)));
@@ -203,7 +205,7 @@ std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(
 
   // remove infrequent classes
   singleItemClasses.erase(
-      std::remove_if(std::execution::par, singleItemClasses.begin(),
+      std::remove_if(std::execution::seq, singleItemClasses.begin(),
                      singleItemClasses.end(),
                      [=](const auto& singleClass) {
                        return singleClass->support() <= minSupport;
@@ -245,7 +247,8 @@ std::vector<EquivalenceClass_> SequenceData::getDoubleFrequentItemClasses(
           continue;
         }
         Sequence seq{data_[sid][itId]};
-        if (eid2 > eid) seq.push_back(-1);
+        if (eid2 > eid) { seq.push_back(-1);
+}
         seq.push_back(data_[sid][itId2]);
         updateSeqClassMap(seqClassMap, seq, sid, eid2);
       }

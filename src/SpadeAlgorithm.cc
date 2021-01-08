@@ -33,17 +33,20 @@ bool SpadeAlgorithm::run(int min_support) {
   auto members = root->getMembers();
   pushToFinalSequences(members);
 
-  std::for_each(std::execution::par, members.begin(), members.end(),
+  std::for_each(std::execution::seq, members.begin(), members.end(),
                 [&](auto& eq) { enumerateFrequentSequences(eq); });
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   std::cout << "Execution time = "
-            << std::chrono::duration_cast<std::chrono::microseconds>(end -
+            << std::chrono::duration_cast<std::chrono::milliseconds>(end -
                                                                      begin)
                    .count()
-            << "[µs]" << std::endl;
+            << " [ms]" << std::endl;
 
-  printFinalSequences();
+  // printFinalSequences();
+  std::cout << "Found " << final_sequences_.size() << " frequent sequences"
+            << std::endl;
+
   return true;
 }
 
@@ -71,14 +74,13 @@ void SpadeAlgorithm::enumerateFrequentSequences(EquivalenceClass_& eq) {
   if (anyFrequentFound) {
     auto members = eq->getMembers();
 
-    std::for_each(std::execution::par, members.begin(), members.end(),
+    std::for_each(std::execution::seq, members.begin(), members.end(),
                   [&](auto& eq) { enumerateFrequentSequences(eq); });
   }
 }
 
 void SpadeAlgorithm::insertClassByPrefix(
-    const EquivalenceClass_& eq,
-    std::vector<EquivalenceClass_>& parents) const {
+    const EquivalenceClass_& eq, std::vector<EquivalenceClass_>& parents) {
   for (auto& p : parents) {
     if (p->isParentOf(eq)) {
       p->addMember(eq);
@@ -91,7 +93,7 @@ void SpadeAlgorithm::insertClassByPrefix(
 
 void SpadeAlgorithm::insertClassByPrefix(const EquivalenceClass_& eq,
                                          EquivalenceClass_& parent1,
-                                         EquivalenceClass_& parent2) const {
+                                         EquivalenceClass_& parent2) {
   if (parent1->isParentOf(eq)) {
     parent1->addMember(eq);
   } else if (parent2->isParentOf(eq)) {
@@ -103,7 +105,7 @@ void SpadeAlgorithm::insertClassByPrefix(const EquivalenceClass_& eq,
 }
 
 std::vector<EquivalenceClass_> SpadeAlgorithm::generateCandidates(
-    const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) const {
+    const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) {
   auto presuf1 = eq1->getPrefixSuffixSeqParts();
   auto presuf2 = eq2->getPrefixSuffixSeqParts();
 
@@ -168,7 +170,7 @@ std::vector<EquivalenceClass_> SpadeAlgorithm::generateCandidates(
 }
 
 std::vector<EquivalenceClass_> SpadeAlgorithm::generateJoinedCandidates(
-    const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) const {
+    const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) {
   auto candidates = generateCandidates(eq1, eq2);
   for (auto& candidate : candidates) {
     candidate->joinIdList(eq1, eq2);

@@ -9,15 +9,15 @@ struct Prefix : public std::vector<int> {
 };
 
 class PrefixSpanAlgorithm : public Algorithm {
- public:
+public:
   PrefixSpanAlgorithm() = default;
   bool loadData(SequenceData input) override;
   bool run(int min_support) override;
 
- private:
+private:
   /// Split input data into projected datasets for each prefix.
   std::map<Prefix, SequenceData> partitionAllSequences();
-  void printSequences(const std::map<Prefix, SequenceData> &sequences) const;
+  static void printSequences(const std::map<Prefix, SequenceData> &sequences);
 
   /// Get fequent items in the given dataset. Prefix is needed to properly
   /// identify sufixes.
