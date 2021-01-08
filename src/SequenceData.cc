@@ -130,11 +130,11 @@ void SequenceData::clear() { data_.clear(); }
 int SequenceData::removeInfrequentItems(int min_support) {
   const auto items_to_delete = infrequentItems(data_, min_support);
 
-  std::cout << "Removing infrequent items: ";
-  for (auto item : items_to_delete) {
-    std::cout << item << " ";
-  }
-  std::cout << std::endl;
+  // std::cout << "Removing infrequent items: ";
+  // for (auto item : items_to_delete) {
+  //   std::cout << item << " ";
+  // }
+  // std::cout << std::endl;
 
   auto transform_function = [&items_to_delete](Sequence seq) {
     seq.erase(std::remove_if(seq.begin(), seq.end(),
@@ -214,51 +214,49 @@ IdList_ SequenceData::getSingleItemIdList(int item) const {
   return std::make_shared<IdList>(idList);
 }
 
-std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(int minSupport) const {
+std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(
+    int minSupport) const {
   auto items = uniqueSingleItems();
   std::vector<EquivalenceClass_> singleItemClasses;
-  
+
   for (const auto& item : items) {
-    singleItemClasses.push_back(std::make_shared<EquivalenceClass>(Sequence({ item })));
+    singleItemClasses.push_back(
+        std::make_shared<EquivalenceClass>(Sequence({item})));
   }
 
-  std::for_each(
-    std::execution::par,
-    singleItemClasses.begin(),
-    singleItemClasses.end(),
-    [&] (auto& singleClass) {
-      singleClass->setIdList(
-        getSingleItemIdList(singleClass->getSequence().at(0))
-      );
-    }
-  );
+  std::for_each(std::execution::par, singleItemClasses.begin(),
+                singleItemClasses.end(), [&](auto& singleClass) {
+                  singleClass->setIdList(
+                      getSingleItemIdList(singleClass->getSequence().at(0)));
+                });
 
   // remove infrequent classes
   singleItemClasses.erase(
-    std::remove_if(std::execution::par, singleItemClasses.begin(), singleItemClasses.end(),
-      [=] (const auto& singleClass) {
-        return singleClass->support() <= minSupport;
-      }
-    ),
-    singleItemClasses.end()
-  );
+      std::remove_if(std::execution::par, singleItemClasses.begin(),
+                     singleItemClasses.end(),
+                     [=](const auto& singleClass) {
+                       return singleClass->support() <= minSupport;
+                     }),
+      singleItemClasses.end());
 
   return singleItemClasses;
 }
 
-void SequenceData::updateSeqClassMap(std::map<Sequence, EquivalenceClass_>& seqClassMap, Sequence& seq, int sid, int eid) const {
+void SequenceData::updateSeqClassMap(
+    std::map<Sequence, EquivalenceClass_>& seqClassMap, Sequence& seq, int sid,
+    int eid) const {
   // if sequence already exists
   if (seqClassMap.find(seq) != seqClassMap.end()) {
     seqClassMap[seq]->addEidToSeqIdList(sid, eid);
   } else {
     seqClassMap.insert(std::pair<Sequence, EquivalenceClass_>(
-      seq,
-      std::make_shared<EquivalenceClass>(seq, std::make_shared<IdList>(sid, eid))
-    ));
+        seq, std::make_shared<EquivalenceClass>(
+                 seq, std::make_shared<IdList>(sid, eid))));
   }
 }
 
-std::vector<EquivalenceClass_> SequenceData::getDoubleFrequentItemClasses(int minSupport) const {
+std::vector<EquivalenceClass_> SequenceData::getDoubleFrequentItemClasses(
+    int minSupport) const {
   std::map<Sequence, EquivalenceClass_> seqClassMap;
   std::vector<EquivalenceClass_> doubleItemClasses;
 
@@ -275,7 +273,7 @@ std::vector<EquivalenceClass_> SequenceData::getDoubleFrequentItemClasses(int mi
           ++eid2;
           continue;
         }
-        Sequence seq{ data_[sid][itId] };
+        Sequence seq{data_[sid][itId]};
         if (eid2 > eid) seq.push_back(-1);
         seq.push_back(data_[sid][itId2]);
         updateSeqClassMap(seqClassMap, seq, sid, eid2);

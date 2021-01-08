@@ -1,13 +1,13 @@
 #include "PrefixSpanAlgorithm.h"
 
 #include <algorithm>
+#include <chrono>
 #include <execution>
 #include <sstream>
 #include <unordered_map>
-#include <chrono>
 
-#include "SequenceData.h"
 #include "Algorithm.h"
+#include "SequenceData.h"
 #include "utils.hpp"
 
 namespace {
@@ -22,7 +22,8 @@ bool PrefixSpanAlgorithm::loadData(SequenceData input) {
 }
 
 bool PrefixSpanAlgorithm::run(int min_support) {
-  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+  std::chrono::steady_clock::time_point begin =
+      std::chrono::steady_clock::now();
 
   std::cout << "Run PrefixSpan algorithm" << std::endl;
 
@@ -41,7 +42,11 @@ bool PrefixSpanAlgorithm::run(int min_support) {
       [=](const auto &item) { recursiveSolve(item.first, item.second); });
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  std::cout << "Execution time = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
+  std::cout << "Execution time = "
+            << std::chrono::duration_cast<std::chrono::microseconds>(end -
+                                                                     begin)
+                   .count()
+            << "[µs]" << std::endl;
 
   printFinalSequences();
 
@@ -50,7 +55,7 @@ bool PrefixSpanAlgorithm::run(int min_support) {
 
 std::map<Prefix, SequenceData> PrefixSpanAlgorithm::partitionAllSequences() {
   auto single_items = input_.uniqueSingleItems();
-  std::cout << "unique items: " << utils::print(single_items) << std::endl;
+  // std::cout << "unique items: " << utils::print(single_items) << std::endl;
 
   std::map<Prefix, SequenceData> sequences;
 
@@ -139,19 +144,20 @@ std::vector<int> PrefixSpanAlgorithm::frequentItems(
 
 void PrefixSpanAlgorithm::recursiveSolve(const Prefix &prefix,
                                          const SequenceData &data) {
-  std::cout << "**************************************************************"
-            << std::endl;
-  std::cout << "recursiveSolve for " << utils::print(prefix) << std::endl;
+  // std::cout <<
+  // "**************************************************************"
+  // << std::endl;
+  // std::cout << "recursiveSolve for " << utils::print(prefix) << std::endl;
 
   // std::cout << "Projected data " << std::endl;
   // data.printData();
 
   auto freq_items = frequentItems(prefix, data);
 
-  std::cout << "frequent items: " << utils::print(freq_items) << std::endl;
+  // std::cout << "frequent items: " << utils::print(freq_items) << std::endl;
 
   if (freq_items.empty()) {
-    std::cout << "no freq items, returning" << std::endl;
+    // std::cout << "no freq items, returning" << std::endl;
     return;
   }
 
