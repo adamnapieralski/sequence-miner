@@ -22,7 +22,7 @@ class SequenceData {
   SequenceData &operator=(SequenceData &&) = default;
 
   static SequenceData load(const std::string &input_path, char separator,
-                           char seq_separator, DataType type);
+                           char seq_separator, DataType type, int limit);
   int size() const;
   const std::vector<int> &sequence(int id) const;
 
@@ -43,10 +43,13 @@ class SequenceData {
 
   std::set<int> uniqueSingleItems() const;
   IdList_ getSingleItemIdList(int item) const;
-  std::vector<EquivalenceClass_> getSingleFrequentItemClasses(int minSupport) const;
+  std::vector<EquivalenceClass_> getSingleFrequentItemClasses(
+      int minSupport) const;
 
-  void updateSeqClassMap(std::map<Sequence, EquivalenceClass_>& seqClassMap, Sequence& seq, int sid, int eid) const;
-  std::vector<EquivalenceClass_> getDoubleFrequentItemClasses(int minSupport) const;
+  void updateSeqClassMap(std::map<Sequence, EquivalenceClass_> &seqClassMap,
+                         Sequence &seq, int sid, int eid) const;
+  std::vector<EquivalenceClass_> getDoubleFrequentItemClasses(
+      int minSupport) const;
 
  private:
   std::vector<Sequence> data_;

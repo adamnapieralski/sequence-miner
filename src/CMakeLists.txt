@@ -11,6 +11,7 @@ set(SRC_LIST
     PrefixSpanAlgorithm.cc
     Parameters.cc
     utils.hpp
+    Parser.cc
 )
 
 add_library(${LIB_NAME} ${SRC_LIST})

@@ -30,8 +30,9 @@ int AlgorithmManager::run() {
     auto seq_sep = parameters_.getChar(par_seq_items_separator);
     auto type = parameters_.getString(par_data_type);
     auto dtype = type == "char" ? DataType::t_char : DataType::t_int;
+    auto limit = parameters_.getInt(par_input_limit);
 
-    algorithm->loadData(SequenceData::load(path, sep, seq_sep, dtype));
+    algorithm->loadData(SequenceData::load(path, sep, seq_sep, dtype, limit));
 
   } catch (const std::runtime_error& e) {
     std::cout << "Error: " << e.what() << std::endl;

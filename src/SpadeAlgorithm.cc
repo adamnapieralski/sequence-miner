@@ -16,7 +16,7 @@ bool SpadeAlgorithm::run(int min_support) {
   std::cout << "Run SPADE algorithm" << std::endl;
 
   min_support_ = min_support;
-  input_.printData();
+  // input_.printData();
 
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
@@ -33,7 +33,7 @@ bool SpadeAlgorithm::run(int min_support) {
   auto members = root->getMembers();
   pushToFinalSequences(members);
 
-  std::for_each(std::execution::seq, members.begin(), members.end(),
+  std::for_each(std::execution::par, members.begin(), members.end(),
                 [&](auto& eq) { enumerateFrequentSequences(eq); });
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -71,7 +71,7 @@ void SpadeAlgorithm::enumerateFrequentSequences(EquivalenceClass_& eq) {
   if (anyFrequentFound) {
     auto members = eq->getMembers();
 
-    std::for_each(std::execution::seq, members.begin(), members.end(),
+    std::for_each(std::execution::par, members.begin(), members.end(),
                   [&](auto& eq) { enumerateFrequentSequences(eq); });
   }
 }

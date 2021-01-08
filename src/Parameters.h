@@ -12,6 +12,7 @@ const std::string par_seq_items_separator = "seq_separator";
 const std::string par_data_type = "data_type";
 const std::string par_algorithm = "algorithm";
 const std::string par_min_support = "min_support";
+const std::string par_input_limit = "input_limit";
 
 class Parameters {
  public:

@@ -9,50 +9,10 @@
 #include <stdexcept>
 #include <unordered_map>
 
+#include "Parser.h"
 #include "utils.hpp"
 
-using SequenceMap = std::unordered_map<int, std::vector<int>>;
-
 namespace {
-SequenceMap readCharDataNoSep(std::ifstream& f, char sep) {
-  int seq_id;
-  int time_id;
-
-  SequenceMap seqs;
-
-  std::map<char, int> char_to_int;
-  auto max_int = 0;
-
-  std::string line;
-  while (!f.eof()) {
-    getline(f, line);
-    std::replace(line.begin(), line.end(), sep, ' ');
-    std::stringstream ss(line);
-    ss >> seq_id;
-    ss >> time_id;
-
-    std::string seq;
-    ss >> seq;
-
-    auto& seq_item = seqs[seq_id];
-    for (auto s : seq) {
-      auto it = char_to_int.find(s);
-      if (it == char_to_int.end()) {
-        char_to_int[s] = ++max_int;
-        seq_item.push_back(max_int);
-      } else {
-        seq_item.push_back(it->second);
-      }
-    }
-    if (!seq.empty()) {
-      seq_item.push_back(-1);
-    }
-  }
-
-  std::cout << "Char to Int map: " << utils::printMap(char_to_int) << std::endl;
-
-  return seqs;
-}
 
 std::vector<Sequence> mapValues(SequenceMap& map) {
   std::vector<Sequence> v;
@@ -84,13 +44,15 @@ std::set<int> infrequentItems(const std::vector<Sequence>& data,
       infrequent_items.insert(it->first);
     }
   }
+
   return infrequent_items;
 }
 
 }  // namespace
 
 SequenceData SequenceData::load(const std::string& input, char separator,
-                                char seq_separator, DataType data_type) {
+                                char seq_separator, DataType data_type,
+                                int limit) {
   std::cout << "Loading file " << input << std::endl;
 
   std::ifstream input_file{input};
@@ -101,8 +63,12 @@ SequenceData SequenceData::load(const std::string& input, char separator,
 
   SequenceMap seqs;
 
-  if (seq_separator == char() and data_type == DataType::t_char) {
-    seqs = readCharDataNoSep(input_file, separator);
+  if (input.substr(input.find_last_of(".") + 1) == "spmf") {
+    seqs = parser::readSpfm(input_file, limit);
+  } else if (seq_separator == char() and data_type == DataType::t_char) {
+    seqs = parser::readCharDataNoSep(input_file, separator);
+  } else {
+    std::cout << "Cannot parse input file. Invalid format." << std::endl;
   }
 
   SequenceData d;
@@ -130,7 +96,8 @@ void SequenceData::clear() { data_.clear(); }
 int SequenceData::removeInfrequentItems(int min_support) {
   const auto items_to_delete = infrequentItems(data_, min_support);
 
-  // std::cout << "Removing infrequent items: ";
+  std::cout << "Removing infrequent items: " << items_to_delete.size()
+            << std::endl;
   // for (auto item : items_to_delete) {
   //   std::cout << item << " ";
   // }
@@ -144,6 +111,10 @@ int SequenceData::removeInfrequentItems(int min_support) {
                              }),
               seq.end());
 
+    if (seq.empty()) {
+      return seq;
+    }
+
     for (auto it = seq.begin() + 1; it != seq.end();) {
       if (*(it - 1) == *it && *it == -1) {
         it = seq.erase(it);
@@ -152,11 +123,11 @@ int SequenceData::removeInfrequentItems(int min_support) {
       }
     }
 
-    if (seq.size() > 0 && seq.front() == -1) {
+    if (!seq.empty() && seq.front() == -1) {
       seq.erase(seq.begin());
     }
 
-    if (seq.size() > 0 && seq.back() == -1) {
+    if (!seq.empty() && seq.back() == -1) {
       seq.pop_back();
     }
 
