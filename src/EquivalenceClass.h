@@ -22,8 +22,8 @@ class EquivalenceClass {
   EquivalenceClass(EquivalenceClass &&) = default;
   EquivalenceClass &operator=(EquivalenceClass &&) = default;
 
-  EquivalenceClass(const Sequence& seq);
-  EquivalenceClass(const Sequence& seq, const IdList_& idList);
+  EquivalenceClass(Sequence  seq);
+  EquivalenceClass(Sequence  seq, IdList_  idList);
 
   void setIdList(const IdList_& idList);
   void insertToIdList(const std::pair<int, EidSequence>& seqIds);

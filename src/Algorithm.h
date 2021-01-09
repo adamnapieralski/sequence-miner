@@ -10,6 +10,7 @@ class Algorithm {
   virtual bool run(int min_support) = 0;
 
   void printFinalSequences();
+  void exportFinalSequences(std::ofstream& f);
 
  protected:
   int min_support_{1};

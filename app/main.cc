@@ -6,8 +6,14 @@
 int main(int argc, const char* argv[]) {
   AlgorithmManager m;
 
-  auto config = argc == 2 ? argv[1] : "data/config.yaml";
+  const auto *config = argc > 1 ? argv[1] : "data/config.yaml";
   m.loadConfig(config);
 
-  return m.run();
+  auto status = m.run();
+
+  if (argc > 2 && status == 0) {
+    m.exportResults(argv[2]);
+  }
+
+  return status;
 }

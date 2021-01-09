@@ -33,7 +33,8 @@ Parameters::Parameters() {
              {par_seq_items_separator, char()},
              {par_algorithm, "spade"},
              {par_min_support, 2},
-             {par_data_type, "char"}};
+             {par_data_type, "char"},
+             {par_input_limit, -1}};
 }
 
 void Parameters::readConfig(const std::string &path) {
@@ -50,6 +51,8 @@ void Parameters::readConfig(const std::string &path) {
                ParamDataType::t_int);
   readYamlNode(params_[par_data_type], config[par_data_type],
                ParamDataType::t_string);
+  readYamlNode(params_[par_input_limit], config[par_input_limit],
+               ParamDataType::t_int);
 }
 
 int Parameters::getInt(const std::string &key) {

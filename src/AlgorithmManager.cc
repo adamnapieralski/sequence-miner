@@ -12,13 +12,12 @@ void AlgorithmManager::loadConfig(const char* path) {
 }
 
 int AlgorithmManager::run() {
-  auto algorithm = std::unique_ptr<Algorithm>();
   const auto& alg_type = parameters_.getString(par_algorithm);
 
   if (alg_type == "spade") {
-    algorithm = std::make_unique<SpadeAlgorithm>();
+    algorithm_ = std::make_unique<SpadeAlgorithm>();
   } else if (alg_type == "prefixspan") {
-    algorithm = std::make_unique<PrefixSpanAlgorithm>();
+    algorithm_ = std::make_unique<PrefixSpanAlgorithm>();
   } else {
     std::cout << "Wrong algorithm type";
     return 2;
@@ -30,8 +29,9 @@ int AlgorithmManager::run() {
     auto seq_sep = parameters_.getChar(par_seq_items_separator);
     auto type = parameters_.getString(par_data_type);
     auto dtype = type == "char" ? DataType::t_char : DataType::t_int;
+    auto limit = parameters_.getInt(par_input_limit);
 
-    algorithm->loadData(SequenceData::load(path, sep, seq_sep, dtype));
+    algorithm_->loadData(SequenceData::load(path, sep, seq_sep, dtype, limit));
 
   } catch (const std::runtime_error& e) {
     std::cout << "Error: " << e.what() << std::endl;
@@ -40,7 +40,21 @@ int AlgorithmManager::run() {
 
   auto min_support = parameters_.getInt(par_min_support);
 
-  auto status = algorithm->run(min_support);
+  auto status = algorithm_->run(min_support);
 
   return status ? 0 : 3;
 };
+
+bool AlgorithmManager::exportResults(const char* path) {
+  if (!algorithm_) {
+    return false;
+  }
+
+  std::ofstream f(path, std::ofstream::out);
+
+  if (f) {
+    algorithm_->exportFinalSequences(f);
+    return true;
+  }
+  return false;
+}

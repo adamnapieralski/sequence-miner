@@ -8,13 +8,14 @@
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
+#include <utility>
 
 #include "utils.hpp"
 
-EquivalenceClass::EquivalenceClass(const Sequence& seq) : seq_{seq} {}
+EquivalenceClass::EquivalenceClass(Sequence  seq) : seq_{std::move(seq)} {}
 
-EquivalenceClass::EquivalenceClass(const Sequence& seq, const IdList_& idList) :
-  seq_{seq}, idList_{idList} {}
+EquivalenceClass::EquivalenceClass(Sequence  seq, IdList_  idList) :
+  seq_{std::move(seq)}, idList_{std::move(idList)} {}
 
 void EquivalenceClass::setIdList(const IdList_& idList) {
   idList_ = idList;
@@ -55,7 +56,7 @@ int EquivalenceClass::support() const {
 
 // is "parent" (or predecessor) if this sequence is a part of eq's sequence from the beginning
 bool EquivalenceClass::isParentOf(const EquivalenceClass_& eq) const {
-  return std::equal(seq_.begin(), seq_.end(), eq->getSequence().begin());
+  return std::equal(seq_.begin(), seq_.end(), eq->getSequence().cbegin());
 }
 
 // returns two last atoms with seperators (=-1) between them and to the left, if applicable
@@ -94,7 +95,7 @@ std::pair<Sequence, Sequence> EquivalenceClass::getPrefixSuffixSeqParts() const 
     }
     // else PS - split stays = 1
     return std::pair<Sequence, Sequence>(Sequence(seq_.begin(), seq_.end() - split), Sequence(seq_.end() - split, seq_.end()));
-  } else if (seq_.size() == 1) {
+  } if (seq_.size() == 1) {
     return std::pair<Sequence, Sequence>(Sequence(), seq_);
   }
   throw std::out_of_range("Empty sequence");
