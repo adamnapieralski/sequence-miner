@@ -11,7 +11,7 @@ class SpadeAlgorithm : public Algorithm {
   bool run(int min_support) override;
 
   void pushToFinalSequences(const std::vector<EquivalenceClass_>& eqClasses);
-  void enumerateFrequentSequences(EquivalenceClass_& eq);
+  void enumerateFrequentSequences(const EquivalenceClass_& eq);
 
   static void insertClassByPrefix(const EquivalenceClass_& eq, std::vector<EquivalenceClass_>& parents) ;
   static void insertClassByPrefix(const EquivalenceClass_& eq, EquivalenceClass_& parent1, EquivalenceClass_& parent2) ;

@@ -197,7 +197,7 @@ for (const auto& item : items) {
   }
 
 
-  std::for_each(std::execution::seq, singleItemClasses.begin(),
+  std::for_each(std::execution::par, singleItemClasses.begin(),
                 singleItemClasses.end(), [&](auto& singleClass) {
                   singleClass->setIdList(
                       getSingleItemIdList(singleClass->getSequence().at(0)));
@@ -205,9 +205,9 @@ for (const auto& item : items) {
 
   // remove infrequent classes
   singleItemClasses.erase(
-      std::remove_if(std::execution::seq, singleItemClasses.begin(),
+      std::remove_if(std::execution::par, singleItemClasses.begin(),
                      singleItemClasses.end(),
-                     [=](const auto& singleClass) {
+                     [&](const auto& singleClass) {
                        return singleClass->support() <= minSupport;
                      }),
       singleItemClasses.end());

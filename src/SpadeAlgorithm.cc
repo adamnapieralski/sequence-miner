@@ -21,20 +21,20 @@ bool SpadeAlgorithm::run(int min_support) {
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
 
-  auto root = std::make_shared<EquivalenceClass>();
+  const auto root = std::make_shared<EquivalenceClass>();
 
   auto frequentSingleItems = input_.getSingleFrequentItemClasses(min_support_);
-  auto frequentDoubleItems = input_.getDoubleFrequentItemClasses(min_support_);
+  const auto frequentDoubleItems = input_.getDoubleFrequentItemClasses(min_support_);
   for (const auto& seq2 : frequentDoubleItems) {
     insertClassByPrefix(seq2, frequentSingleItems);
   }
   root->setMembers(frequentSingleItems);
 
-  auto members = root->getMembers();
+  const auto members = root->getMembers();
   pushToFinalSequences(members);
 
-  std::for_each(std::execution::seq, members.begin(), members.end(),
-                [&](auto& eq) { enumerateFrequentSequences(eq); });
+  std::for_each(std::execution::par, members.begin(), members.end(),
+                [&](const auto& eq) { enumerateFrequentSequences(eq); });
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   std::cout << "Execution time = "
@@ -50,7 +50,7 @@ bool SpadeAlgorithm::run(int min_support) {
   return true;
 }
 
-void SpadeAlgorithm::enumerateFrequentSequences(EquivalenceClass_& eq) {
+void SpadeAlgorithm::enumerateFrequentSequences(const EquivalenceClass_& eq) {
   // std::cout << "Enumerating" << std::endl << std::endl;
 
   // eq->print();
@@ -72,10 +72,10 @@ void SpadeAlgorithm::enumerateFrequentSequences(EquivalenceClass_& eq) {
   pushToFinalSequences(atoms);
 
   if (anyFrequentFound) {
-    auto members = eq->getMembers();
+    const auto members = eq->getMembers();
 
-    std::for_each(std::execution::seq, members.begin(), members.end(),
-                  [&](auto& eq) { enumerateFrequentSequences(eq); });
+    std::for_each(std::execution::par, members.begin(), members.end(),
+                  [&](const auto& eq) { enumerateFrequentSequences(eq); });
   }
 }
 
@@ -106,8 +106,8 @@ void SpadeAlgorithm::insertClassByPrefix(const EquivalenceClass_& eq,
 
 std::vector<EquivalenceClass_> SpadeAlgorithm::generateCandidates(
     const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) {
-  auto presuf1 = eq1->getPrefixSuffixSeqParts();
-  auto presuf2 = eq2->getPrefixSuffixSeqParts();
+  const auto presuf1 = eq1->getPrefixSuffixSeqParts();
+  const auto presuf2 = eq2->getPrefixSuffixSeqParts();
 
   if (presuf1.first != presuf2.first) {
     throw std::invalid_argument(
@@ -180,6 +180,7 @@ std::vector<EquivalenceClass_> SpadeAlgorithm::generateJoinedCandidates(
 
 void SpadeAlgorithm::pushToFinalSequences(
     const std::vector<EquivalenceClass_>& eqClasses) {
+  std::lock_guard<std::mutex> lock(final_sequences_mutex_);
   for (const auto& cl : eqClasses) {
     final_sequences_.push_back(cl->getSequence());
   }
