@@ -36,7 +36,7 @@ bool SpadeAlgorithm::run(int minSupport) {
   pushToFinalSequences(members);
 
   std::cout << "Enumerating remaining frequent sequences...\t" << std::flush;
-  std::for_each(std::execution::par, members.begin(), members.end(),
+  std::for_each(std::execution::par, members.cbegin(), members.cend(),
                 [&](const auto& eq) { enumerateFrequentSequences(eq); });
   std::cout << "✓\n" << std::flush;
 
@@ -78,7 +78,7 @@ void SpadeAlgorithm::enumerateFrequentSequences(const EquivalenceClass_& eq) {
   if (!dfs_ && anyFrequentFound) {
     const auto members = eq->getMembers();
 
-    std::for_each(std::execution::par, members.begin(), members.end(),
+    std::for_each(std::execution::par, members.cbegin(), members.cend(),
                   [&](const auto& eq) { enumerateFrequentSequences(eq); });
   }
 }
