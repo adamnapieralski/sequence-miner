@@ -35,6 +35,8 @@ class EquivalenceClass {
   void addMember(const EquivalenceClass_& member);
   void setMembers(const std::vector<EquivalenceClass_>& members);
 
+  void removeMember(int id);
+
   std::vector<EquivalenceClass_> getMembers() const;
   int getMembersNum() const;
 

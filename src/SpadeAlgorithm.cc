@@ -6,25 +6,27 @@
 
 #include "SequenceData.h"
 
-bool SpadeAlgorithm::loadData(SequenceData input) {
-  std::cout << "Load data for SPADE algorithm" << std::endl;
-  input_ = std::move(input);
-  return true;
+void SpadeAlgorithm::setup(int minSupport, bool dfs) {
+  min_support_ = minSupport;
+  dfs_ = dfs;
 }
 
-bool SpadeAlgorithm::run(int min_support) {
+bool SpadeAlgorithm::run(int minSupport) {
   std::cout << "Run SPADE algorithm" << std::endl;
 
-  min_support_ = min_support;
-  // input_.printData();
+  min_support_ = minSupport;
 
   std::chrono::steady_clock::time_point begin =
       std::chrono::steady_clock::now();
 
   const auto root = std::make_shared<EquivalenceClass>();
 
+  std::cout << "Finding frequent 1-sequences...\t" << std::flush;
   auto frequentSingleItems = input_.getSingleFrequentItemClasses(min_support_);
+  std::cout << "✓\n";
+  std::cout << "Finding frequent 2-sequences...\t" << std::flush;
   const auto frequentDoubleItems = input_.getDoubleFrequentItemClasses(min_support_);
+  std::cout << "✓\n" << std::flush;
   for (const auto& seq2 : frequentDoubleItems) {
     insertClassByPrefix(seq2, frequentSingleItems);
   }
@@ -33,8 +35,10 @@ bool SpadeAlgorithm::run(int min_support) {
   const auto members = root->getMembers();
   pushToFinalSequences(members);
 
+  std::cout << "Enumerating remaining frequent sequences...\t" << std::flush;
   std::for_each(std::execution::par, members.begin(), members.end(),
                 [&](const auto& eq) { enumerateFrequentSequences(eq); });
+  std::cout << "✓\n" << std::flush;
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   std::cout << "Execution time = "
@@ -43,7 +47,6 @@ bool SpadeAlgorithm::run(int min_support) {
                    .count()
             << " [ms]" << std::endl;
 
-  // printFinalSequences();
   std::cout << "Found " << final_sequences_.size() << " frequent sequences"
             << std::endl;
 
@@ -51,9 +54,6 @@ bool SpadeAlgorithm::run(int min_support) {
 }
 
 void SpadeAlgorithm::enumerateFrequentSequences(const EquivalenceClass_& eq) {
-  // std::cout << "Enumerating" << std::endl << std::endl;
-
-  // eq->print();
   auto atoms = eq->getMembers();
   bool anyFrequentFound = false;
 
@@ -61,17 +61,21 @@ void SpadeAlgorithm::enumerateFrequentSequences(const EquivalenceClass_& eq) {
     for (int j = i; j < atoms.size(); ++j) {
       for (const auto& candidate :
            generateJoinedCandidates(atoms[i], atoms[j])) {
-        // candidate->print();
+
         if (candidate->support() > min_support_) {
           anyFrequentFound = true;
           insertClassByPrefix(candidate, atoms[i], atoms[j]);
         }
       }
     }
+    if (dfs_ && anyFrequentFound) {
+      enumerateFrequentSequences(atoms[i]);
+    }
   }
+
   pushToFinalSequences(atoms);
 
-  if (anyFrequentFound) {
+  if (!dfs_ && anyFrequentFound) {
     const auto members = eq->getMembers();
 
     std::for_each(std::execution::par, members.begin(), members.end(),

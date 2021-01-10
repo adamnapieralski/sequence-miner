@@ -11,8 +11,7 @@ struct Prefix : public std::vector<int> {
 class PrefixSpanAlgorithm : public Algorithm {
 public:
   PrefixSpanAlgorithm() = default;
-  bool loadData(SequenceData input) override;
-  bool run(int min_support) override;
+  bool run(int minSupport) override;
 
 private:
   /// Split input data into projected datasets for each prefix.

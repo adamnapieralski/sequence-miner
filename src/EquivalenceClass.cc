@@ -50,6 +50,10 @@ std::vector<EquivalenceClass_> EquivalenceClass::getMembers() const {
   return members_;
 }
 
+void EquivalenceClass::removeMember(int id) {
+  members_.erase(members_.begin() + id);
+}
+
 int EquivalenceClass::support() const {
   return idList_->size();
 }

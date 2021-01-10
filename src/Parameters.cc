@@ -4,14 +4,21 @@
 
 namespace {
 
-enum class ParamDataType { t_int, t_char, t_string };
+enum class ParamDataType { t_int, t_bool, t_char, t_string };
 
-void readYamlNode(std::variant<int, char, std::string> &var,
+void readYamlNode(std::variant<int, bool, char, std::string> &var,
                   const YAML::Node &n, ParamDataType t) {
   if (n.IsScalar()) {
     switch (t) {
       case ParamDataType::t_int:
         var = atoi(n.Scalar().c_str());
+        break;
+      case ParamDataType::t_bool:
+        if (n.Scalar() == "true") {
+          var = true;
+        } else if (n.Scalar() == "false") {
+          var = false;
+        }
         break;
       case ParamDataType::t_char:
         if (n.Scalar().size() == 1) {
@@ -34,6 +41,7 @@ Parameters::Parameters() {
              {par_algorithm, "spade"},
              {par_min_support, 2},
              {par_data_type, "char"},
+             {par_spade_dfs, false},
              {par_input_limit, -1}};
 }
 
@@ -53,10 +61,16 @@ void Parameters::readConfig(const std::string &path) {
                ParamDataType::t_string);
   readYamlNode(params_[par_input_limit], config[par_input_limit],
                ParamDataType::t_int);
+  readYamlNode(params_[par_spade_dfs], config[par_spade_dfs],
+               ParamDataType::t_bool);
 }
 
 int Parameters::getInt(const std::string &key) {
   return std::get<int>(params_[key]);
+}
+
+bool Parameters::getBool(const std::string &key) {
+  return std::get<bool>(params_[key]);
 }
 
 char Parameters::getChar(const std::string &key) {

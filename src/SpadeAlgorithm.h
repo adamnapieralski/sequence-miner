@@ -7,8 +7,10 @@
 class SpadeAlgorithm : public Algorithm {
  public:
   SpadeAlgorithm() = default;
-  bool loadData(SequenceData input) override;
-  bool run(int min_support) override;
+  SpadeAlgorithm(bool dfs): dfs_{dfs} {};
+  bool run(int minSupport) override;
+
+  void setup(int minSupport, bool dfs);
 
   void pushToFinalSequences(const std::vector<EquivalenceClass_>& eqClasses);
   void enumerateFrequentSequences(const EquivalenceClass_& eq);
@@ -20,5 +22,5 @@ class SpadeAlgorithm : public Algorithm {
   static std::vector<EquivalenceClass_> generateJoinedCandidates(const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) ;
 
  private:
-  SequenceData input_;
+  bool dfs_{false};
 };

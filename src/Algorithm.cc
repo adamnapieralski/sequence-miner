@@ -6,6 +6,12 @@
 
 #include "utils.hpp"
 
+
+bool Algorithm::loadData(SequenceData input) {
+  input_ = std::move(input);
+  return true;
+}
+
 void Algorithm::printFinalSequences() {
   std::cout << "Final sequences: ";
   std::lock_guard<std::mutex> lock(final_sequences_mutex_);

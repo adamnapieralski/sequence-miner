@@ -6,9 +6,9 @@
 
 class Algorithm {
  public:
-  virtual bool loadData(SequenceData input) = 0;
-  virtual bool run(int min_support) = 0;
+  virtual bool run(int minSupport) = 0;
 
+  bool loadData(SequenceData input);
   void printFinalSequences();
   void exportFinalSequences(std::ofstream& f);
 

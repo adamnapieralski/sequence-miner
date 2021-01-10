@@ -1,7 +1,7 @@
 # file with input data, full path should be provided
 input_file: /home/napiad/eiti_sem2/med/sequence-miner/data/simple_input.txt
 # minimum support for the sequence 
-min_support: 1
+min_support: 11
 # separator between sequence_id, time_id and the sequence data
 separator: ' '
 # separator between sequence items in one time point
@@ -11,4 +11,5 @@ data_type: 'char'
 # algorithm to detect sequences, possible values: spade, prefixspan
 # algorithm: 'prefixspan'
 algorithm: 'spade'
+spade_dfs: true
 input_limit: 20000
