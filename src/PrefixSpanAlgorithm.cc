@@ -16,18 +16,12 @@ namespace {
 const Prefix null_prefix{0};
 }  // namespace
 
-bool PrefixSpanAlgorithm::loadData(SequenceData input) {
-  std::cout << "Load data for PrefixSpan algorithm" << std::endl;
-  input_ = std::move(input);
-  return true;
-}
-
-bool PrefixSpanAlgorithm::run(int min_support) {
+bool PrefixSpanAlgorithm::run(int minSupport) {
   time_point begin = std::chrono::steady_clock::now();
 
   std::cout << "Run PrefixSpan algorithm" << std::endl;
 
-  min_support_ = min_support;
+  min_support_ = minSupport;
 
   input_.removeInfrequentItems(min_support_);
   // input_.printData();

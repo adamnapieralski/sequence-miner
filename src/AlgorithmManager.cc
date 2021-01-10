@@ -14,8 +14,11 @@ void AlgorithmManager::loadConfig(const char* path) {
 int AlgorithmManager::run() {
   const auto& alg_type = parameters_.getString(par_algorithm);
 
+  auto min_support = parameters_.getInt(par_min_support);
+  auto spade_dfs = parameters_.getBool(par_spade_dfs);
+
   if (alg_type == "spade") {
-    algorithm_ = std::make_unique<SpadeAlgorithm>();
+    algorithm_ = std::make_unique<SpadeAlgorithm>(spade_dfs);
   } else if (alg_type == "prefixspan") {
     algorithm_ = std::make_unique<PrefixSpanAlgorithm>();
   } else {
@@ -37,9 +40,7 @@ int AlgorithmManager::run() {
     std::cout << "Error: " << e.what() << std::endl;
     return 1;
   }
-
-  auto min_support = parameters_.getInt(par_min_support);
-
+  
   auto status = algorithm_->run(min_support);
 
   return status ? 0 : 3;

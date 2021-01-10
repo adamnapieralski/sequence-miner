@@ -1,6 +1,7 @@
 
 #include <sstream>
 #include <string>
+#include <memory>
 
 namespace utils {
 

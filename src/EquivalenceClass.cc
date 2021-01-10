@@ -50,6 +50,10 @@ std::vector<EquivalenceClass_> EquivalenceClass::getMembers() const {
   return members_;
 }
 
+void EquivalenceClass::removeMember(int id) {
+  members_.erase(members_.begin() + id);
+}
+
 int EquivalenceClass::support() const {
   return idList_->size();
 }
@@ -103,9 +107,9 @@ std::pair<Sequence, Sequence> EquivalenceClass::getPrefixSuffixSeqParts() const 
 
 // compute and set this idList based on parents idLists
 void EquivalenceClass::joinIdList(const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) {
-  auto lastPair = getLastSeqPair();
-  auto presuf1 = eq1->getPrefixSuffixSeqParts();
-  auto presuf2 = eq2->getPrefixSuffixSeqParts();
+  const auto lastPair = getLastSeqPair();
+  const auto presuf1 = eq1->getPrefixSuffixSeqParts();
+  const auto presuf2 = eq2->getPrefixSuffixSeqParts();
 
   // PSS
   if (lastPair.size() == 2) {

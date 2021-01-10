@@ -8,6 +8,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
+#include <iterator>
 
 #include "Parser.h"
 #include "utils.hpp"
@@ -22,8 +23,7 @@ std::vector<Sequence> mapValues(SequenceMap& map) {
   return v;
 }
 
-std::set<int> infrequentItems(const std::vector<Sequence>& data,
-                              int min_support) {
+std::unordered_map<int, int> itemsCounter(const std::vector<Sequence>& data) {
   std::unordered_map<int, int> counter;
 
   for (const auto& seq : data) {
@@ -37,15 +37,30 @@ std::set<int> infrequentItems(const std::vector<Sequence>& data,
       ++counter[item];
     }
   }
+  return counter;
+}
 
-  std::set<int> infrequent_items;
-  for (auto & it : counter) {
-    if (it.second <= min_support) {
-      infrequent_items.insert(it.first);
+std::set<int> infrequentItems(const std::vector<Sequence>& data,
+                              int minSupport) {
+  std::set<int> infrequentItems;
+  for (auto& it : itemsCounter(data)) {
+    if (it.second <= minSupport) {
+      infrequentItems.insert(it.first);
     }
   }
 
-  return infrequent_items;
+  return infrequentItems;
+}
+
+std::set<int> frequentItems(const std::vector<Sequence>& data,
+                            int minSupport) {
+  std::set<int> frequentItems;
+  for (auto& it : itemsCounter(data)) {
+    if (it.second > minSupport) {
+      frequentItems.insert(it.first);
+    }
+  }
+  return frequentItems;
 }
 
 }  // namespace
@@ -186,38 +201,31 @@ IdList_ SequenceData::getSingleItemIdList(int item) const {
 }
 
 std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(
-    int minSupport) const {
-  auto items = uniqueSingleItems();
+    int minSupport, bool withIdLists) const {
+
+  const auto frequentItemsSet = frequentItems(data_, minSupport);
+
   std::vector<EquivalenceClass_> singleItemClasses;
 
-  singleItemClasses.reserve(items.size());
-for (const auto& item : items) {
+  singleItemClasses.reserve(frequentItemsSet.size());
+  for (const auto& item : frequentItemsSet) {
     singleItemClasses.push_back(
         std::make_shared<EquivalenceClass>(Sequence({item})));
   }
 
-
-  std::for_each(std::execution::seq, singleItemClasses.begin(),
-                singleItemClasses.end(), [&](auto& singleClass) {
-                  singleClass->setIdList(
-                      getSingleItemIdList(singleClass->getSequence().at(0)));
-                });
-
-  // remove infrequent classes
-  singleItemClasses.erase(
-      std::remove_if(std::execution::seq, singleItemClasses.begin(),
-                     singleItemClasses.end(),
-                     [=](const auto& singleClass) {
-                       return singleClass->support() <= minSupport;
-                     }),
-      singleItemClasses.end());
+  if (withIdLists) {
+    std::for_each(std::execution::par, singleItemClasses.begin(),
+              singleItemClasses.end(), [&](auto& singleClass) {
+                singleClass->setIdList(
+                    getSingleItemIdList(singleClass->getSequence().at(0)));
+              });
+  }
 
   return singleItemClasses;
 }
-
 void SequenceData::updateSeqClassMap(
-    std::map<Sequence, EquivalenceClass_>& seqClassMap, Sequence& seq, int sid,
-    int eid) const {
+    std::map<Sequence, EquivalenceClass_>& seqClassMap, const Sequence& seq,
+    int sid, int eid) const {
   // if sequence already exists
   if (seqClassMap.find(seq) != seqClassMap.end()) {
     seqClassMap[seq]->addEidToSeqIdList(sid, eid);
@@ -247,8 +255,9 @@ std::vector<EquivalenceClass_> SequenceData::getDoubleFrequentItemClasses(
           continue;
         }
         Sequence seq{data_[sid][itId]};
-        if (eid2 > eid) { seq.push_back(-1);
-}
+        if (eid2 > eid) {
+          seq.push_back(-1);
+        }
         seq.push_back(data_[sid][itId2]);
         updateSeqClassMap(seqClassMap, seq, sid, eid2);
       }
