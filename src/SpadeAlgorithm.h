@@ -10,8 +10,6 @@ class SpadeAlgorithm : public Algorithm {
   SpadeAlgorithm(bool dfs): dfs_{dfs} {};
   bool run(int minSupport) override;
 
-  void setup(int minSupport, bool dfs);
-
   void pushToFinalSequences(const std::vector<EquivalenceClass_>& eqClasses);
   void enumerateFrequentSequences(const EquivalenceClass_& eq);
 
