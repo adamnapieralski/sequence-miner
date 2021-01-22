@@ -40,7 +40,7 @@ Parameters::Parameters() {
              {par_seq_items_separator, char()},
              {par_algorithm, "spade"},
              {par_min_support, 2},
-             {par_data_type, "char"},
+             {par_data_type, "string"},
              {par_spade_dfs, false},
              {par_input_limit, -1}};
 }
@@ -50,9 +50,9 @@ void Parameters::readConfig(const std::string &path) {
 
   readYamlNode(params_[par_input], config[par_input], ParamDataType::t_string);
   readYamlNode(params_[par_separator], config[par_separator],
-               ParamDataType::t_char);
+               ParamDataType::t_string);
   readYamlNode(params_[par_seq_items_separator],
-               config[par_seq_items_separator], ParamDataType::t_char);
+               config[par_seq_items_separator], ParamDataType::t_string);
   readYamlNode(params_[par_algorithm], config[par_algorithm],
                ParamDataType::t_string);
   readYamlNode(params_[par_min_support], config[par_min_support],

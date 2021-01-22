@@ -6,7 +6,7 @@
 
 #include "EquivalenceClass.h"
 
-enum class DataType { t_int, t_char };
+enum class DataType { t_int, t_string };
 
 using iterator = std::vector<std::vector<int>>::iterator;
 using const_iterator = std::vector<std::vector<int>>::const_iterator;
@@ -21,8 +21,8 @@ class SequenceData {
   SequenceData(SequenceData &&) = default;
   SequenceData &operator=(SequenceData &&) = default;
 
-  static SequenceData load(const std::string &input_path, char separator,
-                           char seq_separator, DataType type, int limit);
+  static SequenceData load(const std::string &input_path, std::string separator,
+                           std::string seq_separator, DataType type, int limit);
   int size() const;
   const std::vector<int> &sequence(int id) const;
 

@@ -28,10 +28,10 @@ int AlgorithmManager::run() {
 
   try {
     auto path = parameters_.getString(par_input);
-    auto sep = parameters_.getChar(par_separator);
-    auto seq_sep = parameters_.getChar(par_seq_items_separator);
+    auto sep = parameters_.getString(par_separator);
+    auto seq_sep = parameters_.getString(par_seq_items_separator);
     auto type = parameters_.getString(par_data_type);
-    auto dtype = type == "char" ? DataType::t_char : DataType::t_int;
+    auto dtype = type == "string" ? DataType::t_string : DataType::t_int;
     auto limit = parameters_.getInt(par_input_limit);
 
     algorithm_->loadData(SequenceData::load(path, sep, seq_sep, dtype, limit));
@@ -40,7 +40,7 @@ int AlgorithmManager::run() {
     std::cout << "Error: " << e.what() << std::endl;
     return 1;
   }
-  
+
   auto status = algorithm_->run(min_support);
 
   return status ? 0 : 3;
