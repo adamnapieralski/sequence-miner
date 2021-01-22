@@ -26,6 +26,7 @@ int AlgorithmManager::run() {
     return 2;
   }
 
+  // data loading configuration and processing
   try {
     auto path = parameters_.getString(par_input);
     auto sep = parameters_.getChar(par_separator);
@@ -40,7 +41,7 @@ int AlgorithmManager::run() {
     std::cout << "Error: " << e.what() << std::endl;
     return 1;
   }
-  
+
   auto status = algorithm_->run(min_support);
 
   return status ? 0 : 3;

@@ -108,6 +108,9 @@ const_iterator SequenceData::end() const { return data_.end(); }
 
 void SequenceData::clear() { data_.clear(); }
 
+/**
+ * Removes infrequent items from this data.
+ */
 int SequenceData::removeInfrequentItems(int min_support) {
   const auto items_to_delete = infrequentItems(data_, min_support);
 
@@ -179,6 +182,9 @@ std::set<int> SequenceData::uniqueSingleItems() const {
   return unique_items;
 }
 
+/**
+ * Creates and returns idList of single item (sequence of length 1)
+ */
 IdList_ SequenceData::getSingleItemIdList(int item) const {
   std::map<int, EidSequence> idList;
   int sid = 0;
@@ -200,6 +206,9 @@ IdList_ SequenceData::getSingleItemIdList(int item) const {
   return std::make_shared<IdList>(idList);
 }
 
+/**
+ * Returns all frequent ECes with sequences of length 1.
+ */
 std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(
     int minSupport, bool withIdLists) const {
 
@@ -223,6 +232,13 @@ std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(
 
   return singleItemClasses;
 }
+
+/**
+ * Updates seqClassMap with new sequence found at sid, eid position
+ *
+ * If class with such seq already exists in map, its idList is updated with sid, eid.
+ * Otherwise new class in map is created with proper idList.
+ */
 void SequenceData::updateSeqClassMap(
     std::map<Sequence, EquivalenceClass_>& seqClassMap, const Sequence& seq,
     int sid, int eid) const {
@@ -236,6 +252,9 @@ void SequenceData::updateSeqClassMap(
   }
 }
 
+/**
+ * Returns all frequent ECes with sequences of length 2
+ */
 std::vector<EquivalenceClass_> SequenceData::getDoubleFrequentItemClasses(
     int minSupport) const {
   std::map<Sequence, EquivalenceClass_> seqClassMap;
