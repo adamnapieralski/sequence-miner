@@ -34,7 +34,7 @@ int AlgorithmManager::run() {
     auto dtype = type == "string" ? DataType::t_string : DataType::t_int;
     auto limit = parameters_.getInt(par_input_limit);
 
-    algorithm_->loadData(SequenceData::load(path, sep, seq_sep, dtype, limit));
+    algorithm_->loadData(path, sep, seq_sep, dtype, limit);
 
   } catch (const std::runtime_error& e) {
     std::cout << "Error: " << e.what() << std::endl;
@@ -46,16 +46,23 @@ int AlgorithmManager::run() {
   return status ? 0 : 3;
 };
 
-bool AlgorithmManager::exportResults(const char* path) {
+bool AlgorithmManager::exportResults() {
   if (!algorithm_) {
     return false;
   }
 
-  std::ofstream f(path, std::ofstream::out);
+  try {
+    auto outputFile = parameters_.getString(par_output_file);
+    auto outputItemsSeparator = parameters_.getString(par_output_items_separator);
 
-  if (f) {
-    algorithm_->exportFinalSequences(f);
-    return true;
+    std::ofstream f(outputFile, std::ofstream::out);
+    if (f) {
+      algorithm_->exportFinalSequences(f, outputItemsSeparator);
+      return true;
+    }
+  } catch (const std::runtime_error& e) {
+    std::cout << "Error: " << e.what() << std::endl;
+    return false;
   }
   return false;
 }

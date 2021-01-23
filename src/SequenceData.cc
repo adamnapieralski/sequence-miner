@@ -65,10 +65,12 @@ std::set<int> frequentItems(const std::vector<Sequence>& data,
 
 }  // namespace
 
-SequenceData SequenceData::load(const std::string& input, std::string separator,
+void SequenceData::load(const std::string& input, std::string separator,
                                 std::string seq_separator, DataType data_type,
                                 int limit) {
   std::cout << "Loading file " << input << std::endl;
+
+  inputDataType_ = data_type;
 
   std::ifstream input_file{input};
 
@@ -81,18 +83,21 @@ SequenceData SequenceData::load(const std::string& input, std::string separator,
   if (input.substr(input.find_last_of('.') + 1) == "spmf") {
     seqs = parser::readSpfm(input_file, limit);
   } else if (data_type == DataType::t_string) {
-    seqs = parser::readStringData(input_file, separator, seq_separator);
+    seqs = parser::readStringData(input_file, separator, seq_separator, stringToInt_, intToString_);
   } else {
     std::cout << "Cannot parse input file. Invalid format." << std::endl;
   }
 
   SequenceData d;
-  d.data_ = mapValues(seqs);
+  data_ = mapValues(seqs);
 
-  std::cout << "Loaded " << d.data_.size() << " sequences" << std::endl;
-
-  return d;
+  std::cout << "Loaded " << data_.size() << " sequences" << std::endl;
 }
+
+std::string SequenceData::getOriginalStringForId(int id) const {
+  return intToString_.at(id);
+}
+
 
 int SequenceData::size() const { return static_cast<int>(data_.size()); }
 
@@ -272,3 +277,8 @@ std::vector<EquivalenceClass_> SequenceData::getDoubleFrequentItemClasses(
 
   return doubleItemClasses;
 }
+
+DataType SequenceData::getInputDataType() const {
+  return inputDataType_;
+}
+

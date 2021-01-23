@@ -42,7 +42,9 @@ Parameters::Parameters() {
              {par_min_support, 2},
              {par_data_type, "string"},
              {par_spade_dfs, false},
-             {par_input_limit, -1}};
+             {par_input_limit, -1},
+             {par_output_file, "./data/output.txt"},
+             {par_output_items_separator, ","}};
 }
 
 void Parameters::readConfig(const std::string &path) {
@@ -63,6 +65,10 @@ void Parameters::readConfig(const std::string &path) {
                ParamDataType::t_int);
   readYamlNode(params_[par_spade_dfs], config[par_spade_dfs],
                ParamDataType::t_bool);
+  readYamlNode(params_[par_output_file], config[par_output_file],
+               ParamDataType::t_string);
+  readYamlNode(params_[par_output_items_separator], config[par_output_items_separator],
+               ParamDataType::t_string);
 }
 
 int Parameters::getInt(const std::string &key) {

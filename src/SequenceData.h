@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "EquivalenceClass.h"
 
@@ -21,8 +22,11 @@ class SequenceData {
   SequenceData(SequenceData &&) = default;
   SequenceData &operator=(SequenceData &&) = default;
 
-  static SequenceData load(const std::string &input_path, std::string separator,
-                           std::string seq_separator, DataType type, int limit);
+  void load(const std::string &input_path, std::string separator,
+            std::string seq_separator, DataType type, int limit);
+
+  std::string getOriginalStringForId(int id) const;
+
   int size() const;
   const std::vector<int> &sequence(int id) const;
 
@@ -58,6 +62,11 @@ class SequenceData {
   std::vector<EquivalenceClass_> getDoubleFrequentItemClasses(
       int minSupport) const;
 
+  DataType getInputDataType() const;
+
  private:
   std::vector<Sequence> data_;
+  std::map<std::string, int> stringToInt_;
+  std::map<int, std::string> intToString_;
+  DataType inputDataType_;
 };

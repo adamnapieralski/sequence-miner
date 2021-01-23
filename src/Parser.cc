@@ -7,15 +7,16 @@
 
 #include "utils.hpp"
 
-SequenceMap parser::readStringData(std::ifstream &f, std::string idSep, std::string elemSep) {
-  int seq_id = 0;
-  int time_id = 0;
+SequenceMap parser::readStringData(std::ifstream& f, std::string idSep, std::string elemSep,
+                                   std::map<std::string, int>& stringToInt,
+                                   std::map<int, std::string>& intToString) {
+  int seqId = 0;
+  int timeId = 0;
   int sepPos = 0;
 
   SequenceMap seqs;
 
-  std::map<std::string, int> string_to_int;
-  auto max_int = 0;
+  auto maxInt = 0;
 
   std::string line;
   while (!f.eof()) {
@@ -24,15 +25,15 @@ SequenceMap parser::readStringData(std::ifstream &f, std::string idSep, std::str
 
     // read sid
     sepPos = line.find(idSep);
-    seq_id = std::stoi(line.substr(0, sepPos));
+    seqId = std::stoi(line.substr(0, sepPos));
     line.erase(0, sepPos + idSep.length());
 
     // read tid
     sepPos = line.find(idSep);
-    time_id = std::stoi(line.substr(0, sepPos));
+    timeId = std::stoi(line.substr(0, sepPos));
     line.erase(0, sepPos + idSep.length());
 
-    auto &seq_item = seqs[seq_id];
+    auto &seq_item = seqs[seqId];
 
     while (line.size() > 0) {
       sepPos = line.find(elemSep);
@@ -46,10 +47,11 @@ SequenceMap parser::readStringData(std::ifstream &f, std::string idSep, std::str
         elem = line;
         line = "";
       }
-      auto it = string_to_int.find(elem);
-      if (it == string_to_int.end()) {
-        string_to_int[elem] = ++max_int;
-        seq_item.push_back(max_int);
+      auto it = stringToInt.find(elem);
+      if (it == stringToInt.end()) {
+        stringToInt[elem] = ++maxInt;
+        intToString[maxInt] = elem;
+        seq_item.push_back(maxInt);
       } else {
         seq_item.push_back(it->second);
       }
@@ -58,7 +60,8 @@ SequenceMap parser::readStringData(std::ifstream &f, std::string idSep, std::str
     seq_item.push_back(-1);
   }
 
-  std::cout << "String to Int map: " << utils::printMap(string_to_int) << std::endl;
+  std::cout << "String to Int map: " << utils::printMap(stringToInt) << std::endl;
+  std::cout << "Int to string map: " << utils::printMap(intToString) << std::endl;
   return seqs;
 }
 
@@ -67,7 +70,7 @@ SequenceMap parser::readSpfm(std::ifstream &f, int limit) {
 
   std::string line;
 
-  int seq_id = 0;
+  int seqId = 0;
 
   if (limit == -1) {
     limit = std::numeric_limits<int>::max();
@@ -85,7 +88,7 @@ SequenceMap parser::readSpfm(std::ifstream &f, int limit) {
       v.push_back(val);
     }
 
-    seqs[++seq_id] = v;
+    seqs[++seqId] = v;
   }
 
   return seqs;
