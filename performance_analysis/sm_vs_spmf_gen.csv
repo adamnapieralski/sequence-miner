@@ -1,0 +1,13 @@
+program,algorithm,input_file,all_sequences,min_support,frequenct_sequences,time,real_time
+miner,PrefixSpan,gen_1st_10k.spmf,10000,0.002,4024,59,104
+spmf,PrefixSpan,gen_1st_10k.spmf,10000,0.002,4024,358,597
+miner,SPADE,gen_1st_10k.spmf,10000,0.002,4024,1944,2013
+spmf,SPADE,gen_1st_10k.spmf,10000,0.002,4024,570,5970
+miner,PrefixSpan,gen_1st_10k.spmf,10000,0.003,10,45,82
+spmf,PrefixSpan,gen_1st_10k.spmf,10000,0.003,10,308,662
+miner,SPADE,gen_1st_10k.spmf,10000,0.003,10,1998,2061
+spmf,SPADE,gen_1st_10k.spmf,10000,0.003,10,14,5558
+miner,PrefixSpan,gen_1st_10k.spmf,10000,0.001,1541252,4177,6736
+spmf,PrefixSpan,gen_1st_10k.spmf,10000,0.001,1541252,6529,6794
+miner,SPADE,gen_1st_10k.spmf,10000,0.001,1541252,8031,14529
+spmf,SPADE,gen_1st_10k.spmf,10000,0.001,1541252,151577,156266
