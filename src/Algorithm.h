@@ -8,9 +8,12 @@ class Algorithm {
  public:
   virtual bool run(int minSupport) = 0;
 
-  bool loadData(SequenceData input);
+  bool loadData(const std::string& input_path, std::string separator, std::string seq_separator, DataType type, int limit);
+
+  std::vector<std::vector<std::string>> getFinalSequencesAsOriginalStrings();
+
   void printFinalSequences();
-  void exportFinalSequences(std::ofstream& f);
+  void exportFinalSequences(std::ofstream& f, std::string sep);
 
  protected:
   int min_support_{1};

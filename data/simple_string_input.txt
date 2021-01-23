@@ -1,0 +1,10 @@
+1 10 pomidor malinowy, ogorek, ziemniaki
+1 15 pomidor malinowy, piwo miodowe, paliwo Pb95
+1 20 chipsy - Wiejskie ziemniaczki, lody Super!#, pomidor malinowy
+1 25 chleb drwalski, ziemniaki
+2 15 pomidor malinowy, ogorek, chipsy - Wiejskie ziemniaczki
+2 20 frytki, bulki, chleb drwalski
+3 10 lody Super!#
+4 10 pomidor malinowy
+4 20 ogorek, ziemniaki
+4 25 ziemniaki

@@ -10,7 +10,7 @@ class AlgorithmManager {
   AlgorithmManager() = default;
   void loadConfig(const char* path);
   int run();
-  bool exportResults(const char* path);
+  bool exportResults();
 
  private:
   std::unique_ptr<Algorithm> algorithm_{};
