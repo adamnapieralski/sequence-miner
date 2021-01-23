@@ -4,11 +4,14 @@ import subprocess
 
 
 def sequence_miner_min_support(min_support, file):
+    lines = count_lines(file)
+    return int(min_support*lines) - 1
+
+def count_lines(file):
     with open(file) as f:
         for i, _ in enumerate(f):
             pass
-    lines = i + 1
-    return int(min_support*lines) - 1
+    return i+1
 
 def run_spmf(spmf_path, input_file, algorithm, min_support, output_file):
     results = subprocess.run(['java', '-jar', spmf_path, 'run', algorithm, input_file, output_file, str(min_support)], capture_output=True)
@@ -78,9 +81,10 @@ def benchmark(program, input_file, algorithm, min_support, output_file, print_ou
         res['real_time'] = dt
         return res
     if program.endswith('miner'):
-        support = sequence_miner_min_support(min_support, input_file)
+        if isinstance(min_support, float):
+            min_support = sequence_miner_min_support(min_support, input_file)
         s = time.time()
-        out = run_sequence_miner(program, input_file, algorithm, support, output_file)
+        out = run_sequence_miner(program, input_file, algorithm, min_support, output_file)
         dt = round((time.time() - s)*1000) # to ms
         res = process_sequence_miner_stadout(out, print_out)
         res['real_time'] = dt
