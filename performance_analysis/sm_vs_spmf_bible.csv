@@ -1,0 +1,13 @@
+program,algorithm,input_file,all_sequences,min_support,frequenct_sequences,time,real_time
+miner,PrefixSpan,bible.spmf,36370,0.3,15,201,373
+spmf,PrefixSpan,bible.spmf,36370,0.3,15,194,372
+miner,SPADE,bible.spmf,36370,0.3,15,31717,32147
+spmf,SPADE,bible.spmf,36370,0.3,15,27406,27820
+miner,PrefixSpan,bible.spmf,36370,0.2,37,303,489
+spmf,PrefixSpan,bible.spmf,36370,0.2,37,386,591
+miner,SPADE,bible.spmf,36370,0.2,37,27414,27910
+spmf,SPADE,bible.spmf,36370,0.2,37,28007,28755
+miner,PrefixSpan,bible.spmf,36370,0.1,174,1053,1318
+spmf,PrefixSpan,bible.spmf,36370,0.1,174,1074,1309
+miner,SPADE,bible.spmf,36370,0.1,174,33407,34143
+spmf,SPADE,bible.spmf,36370,0.1,174,35717,36436
