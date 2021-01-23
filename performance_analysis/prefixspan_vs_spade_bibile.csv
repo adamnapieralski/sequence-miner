@@ -1,0 +1,7 @@
+algorithm,input_file,all_sequences,min_support,frequenct_sequences,time,real_time
+PrefixSpan,bible.spmf,36370,0.3,15,207,388
+SPADE,bible.spmf,36370,0.3,15,26214,26604
+PrefixSpan,bible.spmf,36370,0.2,37,308,503
+SPADE,bible.spmf,36370,0.2,37,25978,26487
+PrefixSpan,bible.spmf,36370,0.1,174,994,1217
+SPADE,bible.spmf,36370,0.1,174,27375,28017
