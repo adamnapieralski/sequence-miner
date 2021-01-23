@@ -11,8 +11,8 @@ int main(int argc, const char* argv[]) {
 
   auto status = m.run();
 
-  if (argc > 2 && status == 0) {
-    m.exportResults(argv[2]);
+  if (status == 0) {
+    m.exportResults();
   }
 
   return status;

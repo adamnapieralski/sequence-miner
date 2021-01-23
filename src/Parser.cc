@@ -3,46 +3,65 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <string>
 
 #include "utils.hpp"
 
-SequenceMap parser::readCharDataNoSep(std::ifstream &f, char sep) {
-  int seq_id = 0;
-  int time_id = 0;
+SequenceMap parser::readStringData(std::ifstream& f, std::string idSep, std::string elemSep,
+                                   std::map<std::string, int>& stringToInt,
+                                   std::map<int, std::string>& intToString) {
+  int seqId = 0;
+  int timeId = 0;
+  int sepPos = 0;
 
   SequenceMap seqs;
 
-  std::map<char, int> char_to_int;
-  auto max_int = 0;
+  auto maxInt = 0;
 
   std::string line;
   while (!f.eof()) {
     getline(f, line);
-    std::replace(line.begin(), line.end(), sep, ' ');
-    std::stringstream ss(line);
-    ss >> seq_id;
-    ss >> time_id;
+    if (line.length() == 0) break;
 
-    std::string seq;
-    ss >> seq;
+    // read sid
+    sepPos = line.find(idSep);
+    seqId = std::stoi(line.substr(0, sepPos));
+    line.erase(0, sepPos + idSep.length());
 
-    auto &seq_item = seqs[seq_id];
-    for (auto s : seq) {
-      auto it = char_to_int.find(s);
-      if (it == char_to_int.end()) {
-        char_to_int[s] = ++max_int;
-        seq_item.push_back(max_int);
+    // read tid
+    sepPos = line.find(idSep);
+    timeId = std::stoi(line.substr(0, sepPos));
+    line.erase(0, sepPos + idSep.length());
+
+    auto &seq_item = seqs[seqId];
+
+    while (line.size() > 0) {
+      sepPos = line.find(elemSep);
+      std::string elem = "";
+      if (sepPos != std::string::npos) {
+        elem = line.substr(0, sepPos);
+        line.erase(0, sepPos + elemSep.length());
+      } else {
+        // only \n, may add \r for Windows
+        line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
+        elem = line;
+        line = "";
+      }
+      auto it = stringToInt.find(elem);
+      if (it == stringToInt.end()) {
+        stringToInt[elem] = ++maxInt;
+        intToString[maxInt] = elem;
+        seq_item.push_back(maxInt);
       } else {
         seq_item.push_back(it->second);
       }
     }
-    if (!seq.empty()) {
-      seq_item.push_back(-1);
-    }
+
+    seq_item.push_back(-1);
   }
 
-  std::cout << "Char to Int map: " << utils::printMap(char_to_int) << std::endl;
-
+  std::cout << "String to Int map: " << utils::printMap(stringToInt) << std::endl;
+  std::cout << "Int to string map: " << utils::printMap(intToString) << std::endl;
   return seqs;
 }
 
@@ -51,7 +70,7 @@ SequenceMap parser::readSpfm(std::ifstream &f, int limit) {
 
   std::string line;
 
-  int seq_id = 0;
+  int seqId = 0;
 
   if (limit == -1) {
     limit = std::numeric_limits<int>::max();
@@ -69,7 +88,7 @@ SequenceMap parser::readSpfm(std::ifstream &f, int limit) {
       v.push_back(val);
     }
 
-    seqs[++seq_id] = v;
+    seqs[++seqId] = v;
   }
 
   return seqs;
