@@ -4,11 +4,11 @@
 #include <execution>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <map>
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
-#include <iterator>
 
 #include "Parser.h"
 #include "utils.hpp"
@@ -17,7 +17,7 @@ namespace {
 
 std::vector<Sequence> mapValues(SequenceMap& map) {
   std::vector<Sequence> v;
-  for (auto & it : map) {
+  for (auto& it : map) {
     v.emplace_back(std::move(it.second));
   }
   return v;
@@ -29,7 +29,7 @@ std::unordered_map<int, int> itemsCounter(const std::vector<Sequence>& data) {
   for (const auto& seq : data) {
     std::set<int> items;
     for (auto item : seq) {
-      if (item != -1) {
+      if (item != SEP) {
         items.insert(item);
       }
     }
@@ -52,8 +52,7 @@ std::set<int> infrequentItems(const std::vector<Sequence>& data,
   return infrequentItems;
 }
 
-std::set<int> frequentItems(const std::vector<Sequence>& data,
-                            int minSupport) {
+std::set<int> frequentItems(const std::vector<Sequence>& data, int minSupport) {
   std::set<int> frequentItems;
   for (auto& it : itemsCounter(data)) {
     if (it.second > minSupport) {
@@ -66,8 +65,8 @@ std::set<int> frequentItems(const std::vector<Sequence>& data,
 }  // namespace
 
 void SequenceData::load(const std::string& input, std::string separator,
-                                std::string seq_separator, DataType data_type,
-                                int limit) {
+                        std::string seq_separator, DataType data_type,
+                        int limit) {
   std::cout << "Loading file " << input << std::endl;
 
   inputDataType_ = data_type;
@@ -83,7 +82,8 @@ void SequenceData::load(const std::string& input, std::string separator,
   if (input.substr(input.find_last_of('.') + 1) == "spmf") {
     seqs = parser::readSpfm(input_file, limit);
   } else if (data_type == DataType::t_string) {
-    seqs = parser::readStringData(input_file, separator, seq_separator, stringToInt_, intToString_);
+    seqs = parser::readStringData(input_file, separator, seq_separator,
+                                  stringToInt_, intToString_);
   } else {
     std::cout << "Cannot parse input file. Invalid format." << std::endl;
   }
@@ -97,7 +97,6 @@ void SequenceData::load(const std::string& input, std::string separator,
 std::string SequenceData::getOriginalStringForId(int id) const {
   return intToString_.at(id);
 }
-
 
 int SequenceData::size() const { return static_cast<int>(data_.size()); }
 
@@ -129,8 +128,8 @@ int SequenceData::removeInfrequentItems(int min_support) {
   auto transform_function = [&items_to_delete](Sequence seq) {
     seq.erase(std::remove_if(seq.begin(), seq.end(),
                              [&items_to_delete](int x) {
-                               return x != -1 && items_to_delete.find(x) !=
-                                                     items_to_delete.end();
+                               return x != SEP && items_to_delete.find(x) !=
+                                                      items_to_delete.end();
                              }),
               seq.end());
 
@@ -139,18 +138,18 @@ int SequenceData::removeInfrequentItems(int min_support) {
     }
 
     for (auto it = seq.begin() + 1; it != seq.end();) {
-      if (*(it - 1) == -1 && *it == -1) {
+      if (*(it - 1) == SEP && *it == SEP) {
         it = seq.erase(it);
       } else {
         ++it;
       }
     }
 
-    if (!seq.empty() && seq.front() == -1) {
+    if (!seq.empty() && seq.front() == SEP) {
       seq.erase(seq.begin());
     }
 
-    if (!seq.empty() && seq.back() == -1) {
+    if (!seq.empty() && seq.back() == SEP) {
       seq.pop_back();
     }
 
@@ -178,7 +177,7 @@ std::set<int> SequenceData::uniqueSingleItems() const {
 
   for (const auto& v : data_) {
     for (auto s : v) {
-      if (s != -1) {
+      if (s != SEP) {
         unique_items.insert(s);
       }
     }
@@ -197,7 +196,7 @@ IdList_ SequenceData::getSingleItemIdList(int item) const {
     EidSequence eidSeq{};
     int eid = 0;
     for (auto s : v) {
-      if (s == -1) {
+      if (s == SEP) {
         ++eid;
       } else if (s == item) {
         eidSeq.insert(eid);
@@ -216,7 +215,6 @@ IdList_ SequenceData::getSingleItemIdList(int item) const {
  */
 std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(
     int minSupport, bool withIdLists) const {
-
   const auto frequentItemsSet = frequentItems(data_, minSupport);
 
   std::vector<EquivalenceClass_> singleItemClasses;
@@ -229,10 +227,10 @@ std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(
 
   if (withIdLists) {
     std::for_each(std::execution::par, singleItemClasses.begin(),
-              singleItemClasses.end(), [&](auto& singleClass) {
-                singleClass->setIdList(
-                    getSingleItemIdList(singleClass->getSequence().at(0)));
-              });
+                  singleItemClasses.end(), [&](auto& singleClass) {
+                    singleClass->setIdList(
+                        getSingleItemIdList(singleClass->getSequence().at(0)));
+                  });
   }
 
   return singleItemClasses;
@@ -241,8 +239,8 @@ std::vector<EquivalenceClass_> SequenceData::getSingleFrequentItemClasses(
 /**
  * Updates seqClassMap with new sequence found at sid, eid position
  *
- * If class with such seq already exists in map, its idList is updated with sid, eid.
- * Otherwise new class in map is created with proper idList.
+ * If class with such seq already exists in map, its idList is updated with sid,
+ * eid. Otherwise new class in map is created with proper idList.
  */
 void SequenceData::updateSeqClassMap(
     std::map<Sequence, EquivalenceClass_>& seqClassMap, const Sequence& seq,
@@ -268,19 +266,19 @@ std::vector<EquivalenceClass_> SequenceData::getDoubleFrequentItemClasses(
   for (int sid = 0; sid < data_.size(); ++sid) {
     int eid = 0;
     for (int itId = 0; itId < data_[sid].size(); ++itId) {
-      if (data_[sid][itId] == -1) {
+      if (data_[sid][itId] == SEP) {
         ++eid;
         continue;
       }
       int eid2 = eid;
       for (int itId2 = itId + 1; itId2 < data_[sid].size(); ++itId2) {
-        if (data_[sid][itId2] == -1) {
+        if (data_[sid][itId2] == SEP) {
           ++eid2;
           continue;
         }
         Sequence seq{data_[sid][itId]};
         if (eid2 > eid) {
-          seq.push_back(-1);
+          seq.push_back(SEP);
         }
         seq.push_back(data_[sid][itId2]);
         updateSeqClassMap(seqClassMap, seq, sid, eid2);
@@ -297,7 +295,4 @@ std::vector<EquivalenceClass_> SequenceData::getDoubleFrequentItemClasses(
   return doubleItemClasses;
 }
 
-DataType SequenceData::getInputDataType() const {
-  return inputDataType_;
-}
-
+DataType SequenceData::getInputDataType() const { return inputDataType_; }

@@ -10,18 +10,18 @@
 #include <unordered_map>
 #include <utility>
 
+#include "SequenceData.h"
 #include "utils.hpp"
 
-EquivalenceClass::EquivalenceClass(Sequence  seq) : seq_{std::move(seq)} {}
+EquivalenceClass::EquivalenceClass(Sequence seq) : seq_{std::move(seq)} {}
 
-EquivalenceClass::EquivalenceClass(Sequence  seq, IdList_  idList) :
-  seq_{std::move(seq)}, idList_{std::move(idList)} {}
+EquivalenceClass::EquivalenceClass(Sequence seq, IdList_ idList)
+    : seq_{std::move(seq)}, idList_{std::move(idList)} {}
 
-void EquivalenceClass::setIdList(const IdList_& idList) {
-  idList_ = idList;
-}
+void EquivalenceClass::setIdList(const IdList_& idList) { idList_ = idList; }
 
-void EquivalenceClass::insertToIdList(const std::pair<int, EidSequence>& seqIds) {
+void EquivalenceClass::insertToIdList(
+    const std::pair<int, EidSequence>& seqIds) {
   idList_->insert(seqIds);
 }
 
@@ -29,20 +29,16 @@ void EquivalenceClass::addEidToSeqIdList(int sid, int eid) {
   idList_->addEidToSeq(sid, eid);
 }
 
-Sequence EquivalenceClass::getSequence() const {
-  return seq_;
-}
+Sequence EquivalenceClass::getSequence() const { return seq_; }
 
-IdList_ EquivalenceClass::getIdList() const {
-  return idList_;
-}
-
+IdList_ EquivalenceClass::getIdList() const { return idList_; }
 
 void EquivalenceClass::addMember(const EquivalenceClass_& member) {
   members_.push_back(member);
 }
 
-void EquivalenceClass::setMembers(const std::vector<EquivalenceClass_>& members) {
+void EquivalenceClass::setMembers(
+    const std::vector<EquivalenceClass_>& members) {
   members_ = members;
 }
 
@@ -54,20 +50,20 @@ void EquivalenceClass::removeMember(int id) {
   members_.erase(members_.begin() + id);
 }
 
-int EquivalenceClass::support() const {
-  return idList_->size();
-}
+int EquivalenceClass::support() const { return idList_->size(); }
 
 /**
- * Is "parent" (or predecessor) of other EC if this sequence is a subset of eq's sequence from the beginning
+ * Is "parent" (or predecessor) of other EC if this sequence is a subset of eq's
+ * sequence from the beginning
  */
 bool EquivalenceClass::isParentOf(const EquivalenceClass_& eq) const {
   return std::equal(seq_.begin(), seq_.end(), eq->getSequence().cbegin());
 }
 
 /**
- * Returns two last atoms with seperators (=-1) between them and to the left, if applicable
- * One of cases: {[A, B], [-1, A, B], [A, -1, B], [-1, A, -1, B]}
+ * Returns two last atoms with seperators (=SEP) between them and to the left,
+ * if applicable One of cases: {[A, B], [SEP, A, B], [A, SEP, B], [SEP, A, SEP,
+ * B]}
  */
 Sequence EquivalenceClass::getLastSeqPair() const {
   int rStartId = 1;
@@ -76,7 +72,7 @@ Sequence EquivalenceClass::getLastSeqPair() const {
     throw std::out_of_range("Sequence has less than 2 elements.");
   }
   for (int i = seq_.size() - 2; i >= 0; --i) {
-    if (seq_[i] == -1) {
+    if (seq_[i] == SEP) {
       ++rStartId;
       if (found) {
         break;
@@ -93,19 +89,24 @@ Sequence EquivalenceClass::getLastSeqPair() const {
 }
 
 /**
- * Returns pair of <prefix, suffix>, where suffix would be last atom with left separator (=-1) if applicable
- * suffix = {[-1, S], [S]}, prefix = everything before it
+ * Returns pair of <prefix, suffix>, where suffix would be last atom with left
+ * separator (=SEP) if applicable suffix = {[SEP, S], [S]}, prefix = everything
+ * before it
  */
-std::pair<Sequence, Sequence> EquivalenceClass::getPrefixSuffixSeqParts() const {
+std::pair<Sequence, Sequence> EquivalenceClass::getPrefixSuffixSeqParts()
+    const {
   if (seq_.size() > 1) {
     int split = 1;
     // P -> S
-    if (seq_[seq_.size() - 2] == -1) {
+    if (seq_[seq_.size() - 2] == SEP) {
       split = 2;
     }
     // else PS - split stays = 1
-    return std::pair<Sequence, Sequence>(Sequence(seq_.begin(), seq_.end() - split), Sequence(seq_.end() - split, seq_.end()));
-  } if (seq_.size() == 1) {
+    return std::pair<Sequence, Sequence>(
+        Sequence(seq_.begin(), seq_.end() - split),
+        Sequence(seq_.end() - split, seq_.end()));
+  }
+  if (seq_.size() == 1) {
     return std::pair<Sequence, Sequence>(Sequence(), seq_);
   }
   throw std::out_of_range("Empty sequence");
@@ -116,7 +117,8 @@ std::pair<Sequence, Sequence> EquivalenceClass::getPrefixSuffixSeqParts() const 
  *
  * Handles different suffixes configurations.
  */
-void EquivalenceClass::joinIdList(const EquivalenceClass_& eq1, const EquivalenceClass_& eq2) {
+void EquivalenceClass::joinIdList(const EquivalenceClass_& eq1,
+                                  const EquivalenceClass_& eq2) {
   const auto lastPair = getLastSeqPair();
   const auto presuf1 = eq1->getPrefixSuffixSeqParts();
   const auto presuf2 = eq2->getPrefixSuffixSeqParts();
@@ -126,13 +128,14 @@ void EquivalenceClass::joinIdList(const EquivalenceClass_& eq1, const Equivalenc
     idList_ = eq1->idList_->joinEqual(eq2->idList_);
   }
   // P -> SS
-  else if (lastPair.size() == 3 && lastPair[0] == -1) {
+  else if (lastPair.size() == 3 && lastPair[0] == SEP) {
     idList_ = eq1->idList_->joinEqual(eq2->idList_);
   }
   // PS -> S
-  else if (lastPair.size() == 3 && lastPair[1] == -1) {
+  else if (lastPair.size() == 3 && lastPair[1] == SEP) {
     // PS1 -> S2
-    if (presuf1.second.size() == 1 && presuf2.second.size() == 2 && presuf2.second[0] == -1) {
+    if (presuf1.second.size() == 1 && presuf2.second.size() == 2 &&
+        presuf2.second[0] == SEP) {
       idList_ = eq1->idList_->joinLatter(eq2->idList_);
     }
     // PS2 -> S1
@@ -141,7 +144,8 @@ void EquivalenceClass::joinIdList(const EquivalenceClass_& eq1, const Equivalenc
     }
   }
   // P -> S -> S
-  else if (lastPair.size() == 4 && presuf1.second.size() == 2 && presuf2.second.size() == 2) {
+  else if (lastPair.size() == 4 && presuf1.second.size() == 2 &&
+           presuf2.second.size() == 2) {
     // P -> S1 -> S2
     if (lastPair[1] == presuf1.second[1]) {
       idList_ = eq1->idList_->joinLatter(eq2->idList_);
@@ -150,8 +154,7 @@ void EquivalenceClass::joinIdList(const EquivalenceClass_& eq1, const Equivalenc
     else if (lastPair[1] == presuf2.second[1]) {
       idList_ = eq2->idList_->joinLatter(eq1->idList_);
     }
-  }
-  else {
+  } else {
     throw std::invalid_argument("Invalid last pair of this class.");
   }
 }
