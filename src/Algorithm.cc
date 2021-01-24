@@ -25,6 +25,8 @@ Algorithm::getFinalSequencesAsOriginalStrings() {
     for (auto elem : seq) {
       if (elem != SEP) {
         strSeq.push_back(input_.getOriginalStringForId(elem));
+      } else {
+        strSeq.push_back("-1");
       }
     }
     originalStringsSequences.push_back(strSeq);

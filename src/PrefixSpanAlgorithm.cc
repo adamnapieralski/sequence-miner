@@ -14,6 +14,23 @@ using time_point = std::chrono::steady_clock::time_point;
 
 namespace {
 const Prefix null_prefix{0};
+
+bool checkSeq(const Prefix &pref, const Sequence &seq, int pos) {
+  --pos;
+  for (auto it = pref.rbegin(); it != pref.rend(); ++it) {
+    if (pos >= 0 && seq[pos] == SEP) {
+      return false;
+    }
+    while (pos >= 0 && *it != seq[pos]) {
+      if (seq[pos] == SEP) {
+        return false;
+      }
+      --pos;
+    }
+    --pos;
+  }
+  return pos >= 0;
+}
 }  // namespace
 
 bool PrefixSpanAlgorithm::run(int minSupport) {
@@ -95,7 +112,7 @@ std::vector<int> PrefixSpanAlgorithm::frequentItems(
     const Prefix &prefix, const SequenceData &data) const {
   std::unordered_map<int, int> counter;
 
-  std::set<int> pref_set(prefix.begin(), prefix.end());
+  // std::set<int> pref_set(prefix.begin(), prefix.end());
 
   for (const auto &seq : data) {
     if (seq.empty()) {
@@ -115,9 +132,10 @@ std::vector<int> PrefixSpanAlgorithm::frequentItems(
     // contains the prefix
     for (; it != seq.end(); ++it) {
       if (*it != SEP) {
-        if (*(it - 1) == prefix.back()) {
+        //  *(it - 1) == prefix.back()
+        if (checkSeq(prefix, seq, it - seq.begin())) {
           items.insert(-1 * (*it));
-        } else if (pref_set.find(*it) == pref_set.end()) {
+        } else {
           items.insert(*it);
         }
       }
@@ -142,14 +160,14 @@ void PrefixSpanAlgorithm::recursiveSolve(const Prefix &prefix,
   // std::cout <<
   // "**************************************************************"
   //           << std::endl;
-  // std::cout << "recursiveSolve for " << utils::print(prefix) << std::endl;
+  std::cout << "recursiveSolve for " << utils::print(prefix) << std::endl;
 
-  // std::cout << "Projected data " << std::endl;
-  // data.printData();
+  std::cout << "Projected data " << std::endl;
+  data.printData();
 
   const auto freq_items = frequentItems(prefix, data);
 
-  // std::cout << "frequent items: " << utils::print(freq_items) << std::endl;
+  std::cout << "frequent items: " << utils::print(freq_items) << std::endl;
 
   if (freq_items.empty()) {
     //   std::cout << "no freq items, returning" << std::endl;
@@ -175,12 +193,14 @@ void PrefixSpanAlgorithm::recursiveSolve(const Prefix &prefix,
           // Additional conditions to cope with elements that contain multiple
           // items.
 
+          // The first element cannot be positive, because if the first element
+          // is a new itemset, sequence starts with SEP.
           if (it == seq.cbegin() && pref > 0) {
             continue;
           }
 
-          if (it > seq.cbegin() && pref < 0 && prefix.empty() &&
-              !first_element) {
+          if (it > seq.cbegin() && pref < 0 &&
+              !checkSeq(prefix, seq, it - seq.begin())) {
             continue;
           }
 
