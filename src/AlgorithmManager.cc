@@ -29,8 +29,8 @@ int AlgorithmManager::run() {
   // data loading configuration and processing
   try {
     auto path = parameters_.getString(par_input);
-    auto sep = parameters_.getString(par_separator);
-    auto seq_sep = parameters_.getString(par_seq_items_separator);
+    auto sep = parameters_.getString(par_input_ids_separator);
+    auto seq_sep = parameters_.getString(par_input_items_separator);
     auto type = parameters_.getString(par_data_type);
     auto dtype = type == "string" ? DataType::t_string : DataType::t_int;
     auto limit = parameters_.getInt(par_input_limit);
