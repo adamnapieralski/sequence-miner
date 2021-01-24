@@ -15,6 +15,10 @@ using time_point = std::chrono::steady_clock::time_point;
 namespace {
 const Prefix null_prefix{0};
 
+/**
+ * For the item in positions pos in sequence seq, check if it can be a suffix of
+ * the given prefix.
+ */
 bool checkSeq(const Prefix &pref, const Sequence &seq, int pos) {
   --pos;
   for (auto it = pref.rbegin(); it != pref.rend(); ++it) {
@@ -33,6 +37,9 @@ bool checkSeq(const Prefix &pref, const Sequence &seq, int pos) {
 }
 }  // namespace
 
+/**
+ * Run PrefixSpan algorithm with the specified support.
+ */
 bool PrefixSpanAlgorithm::run(int minSupport) {
   time_point begin = std::chrono::steady_clock::now();
 
@@ -41,11 +48,10 @@ bool PrefixSpanAlgorithm::run(int minSupport) {
   min_support_ = minSupport;
 
   input_.removeInfrequentItems(min_support_);
-  // input_.printData();
 
   const auto sequences = partitionAllSequences();
 
-  // no longer needed
+  // data no longer needed
   input_.clear();
 
   std::for_each(
@@ -59,16 +65,18 @@ bool PrefixSpanAlgorithm::run(int minSupport) {
                    .count()
             << " [ms]" << std::endl;
 
-  // printFinalSequences();
   std::cout << "Found " << final_sequences_.size() << " frequent sequences"
             << std::endl;
 
   return true;
 }
 
+/**
+ * For each single, frequenct items select sequences for which this item is a
+ * prefix.
+ */
 std::map<Prefix, SequenceData> PrefixSpanAlgorithm::partitionAllSequences() {
   const auto single_items = input_.uniqueSingleItems();
-  // std::cout << "unique items: " << utils::print(single_items) << std::endl;
 
   std::map<Prefix, SequenceData> sequences;
 
@@ -108,11 +116,13 @@ void PrefixSpanAlgorithm::printSequences(
   std::cout << "********************************************" << std::endl;
 }
 
+/**
+ * Select fequenct items from the sequences. If item is negative, it is in the
+ * same itemset as the prefix.
+ */
 std::vector<int> PrefixSpanAlgorithm::frequentItems(
     const Prefix &prefix, const SequenceData &data) const {
   std::unordered_map<int, int> counter;
-
-  // std::set<int> pref_set(prefix.begin(), prefix.end());
 
   for (const auto &seq : data) {
     if (seq.empty()) {
@@ -132,7 +142,6 @@ std::vector<int> PrefixSpanAlgorithm::frequentItems(
     // contains the prefix
     for (; it != seq.end(); ++it) {
       if (*it != SEP) {
-        //  *(it - 1) == prefix.back()
         if (checkSeq(prefix, seq, it - seq.begin())) {
           items.insert(-1 * (*it));
         } else {
@@ -155,22 +164,20 @@ std::vector<int> PrefixSpanAlgorithm::frequentItems(
   return infrequent_items;
 }
 
+/**
+ * Recursive algorithm for finding frequenct sequences that begin with the given
+ * prefix.
+ */
 void PrefixSpanAlgorithm::recursiveSolve(const Prefix &prefix,
                                          const SequenceData &data) {
-  // std::cout <<
-  // "**************************************************************"
-  //           << std::endl;
-  std::cout << "recursiveSolve for " << utils::print(prefix) << std::endl;
-
-  std::cout << "Projected data " << std::endl;
-  data.printData();
+  // std::cout << "recursiveSolve for " << utils::print(prefix) << std::endl;
+  // std::cout << "Projected data " << std::endl;
+  // data.printData();
 
   const auto freq_items = frequentItems(prefix, data);
-
-  std::cout << "frequent items: " << utils::print(freq_items) << std::endl;
+  // std::cout << "frequent items: " << utils::print(freq_items) << std::endl;
 
   if (freq_items.empty()) {
-    //   std::cout << "no freq items, returning" << std::endl;
     return;
   }
 
@@ -190,16 +197,14 @@ void PrefixSpanAlgorithm::recursiveSolve(const Prefix &prefix,
 
       for (auto it = seq.cbegin(); it != seq.cend(); ++it) {
         if (*it == abs(pref) && it + 1 != seq.cend()) {
-          // Additional conditions to cope with elements that contain multiple
-          // items.
-
-          // The first element cannot be positive, because if the first element
-          // is a new itemset, sequence starts with SEP.
-          if (it == seq.cbegin() && pref > 0) {
+          // First item before SEP is in the same itemset as the prefix.
+          if (first_element && pref > 0) {
             continue;
           }
 
-          if (it > seq.cbegin() && pref < 0 &&
+          // Additional conditions to cope with itemsets that contain multiple
+          // items.
+          if (it > seq.cbegin() && pref < 0 && !first_element &&
               !checkSeq(prefix, seq, it - seq.begin())) {
             continue;
           }
