@@ -16,6 +16,7 @@ const std::string par_input_limit = "input_limit";
 const std::string par_spade_dfs = "spade_dfs";
 const std::string par_output_file = "output_file";
 const std::string par_output_items_separator = "output_items_separator";
+const std::string par_output_events_separator = "output_events_separator";
 
 class Parameters {
  public:

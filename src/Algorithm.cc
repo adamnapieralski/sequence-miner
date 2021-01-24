@@ -14,7 +14,7 @@ bool Algorithm::loadData(const std::string& input_path, std::string separator,
 }
 
 std::vector<std::vector<std::string>>
-Algorithm::getFinalSequencesAsOriginalStrings() {
+Algorithm::getFinalSequencesAsOriginalStrings(std::string eventsSep) {
   std::vector<std::vector<std::string>> originalStringsSequences;
 
   std::lock_guard<std::mutex> lock(final_sequences_mutex_);
@@ -26,7 +26,7 @@ Algorithm::getFinalSequencesAsOriginalStrings() {
       if (elem != SEP) {
         strSeq.push_back(input_.getOriginalStringForId(elem));
       } else {
-        strSeq.push_back("-1");
+        strSeq.push_back(eventsSep);
       }
     }
     originalStringsSequences.push_back(strSeq);
@@ -45,11 +45,11 @@ void Algorithm::printFinalSequences() {
   std::cout << "Size: " << final_sequences_.size() << std::endl;
 }
 
-void Algorithm::exportFinalSequences(std::ofstream& f, std::string sep) {
+void Algorithm::exportFinalSequences(std::ofstream& f, std::string itemsSep, std::string eventsSep) {
   if (input_.getInputDataType() == DataType::t_string) {
-    for (const auto& seq : getFinalSequencesAsOriginalStrings()) {
+    for (const auto& seq : getFinalSequencesAsOriginalStrings(eventsSep)) {
       for (const auto& elem : seq) {
-        f << elem << sep;
+        f << elem << itemsSep;
       }
       f << "\n";
     }
@@ -58,7 +58,7 @@ void Algorithm::exportFinalSequences(std::ofstream& f, std::string sep) {
     std::sort(final_sequences_.begin(), final_sequences_.end());
     for (const auto& seq : final_sequences_) {
       for (const auto& elem : seq) {
-        f << elem << sep;
+        f << elem << itemsSep;
       }
       f << "\n";
     }

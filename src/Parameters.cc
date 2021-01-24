@@ -44,7 +44,8 @@ Parameters::Parameters() {
              {par_spade_dfs, false},
              {par_input_limit, -1},
              {par_output_file, "./data/output.txt"},
-             {par_output_items_separator, ","}};
+             {par_output_items_separator, ","},
+             {par_output_events_separator, "->"}};
 }
 
 void Parameters::readConfig(const std::string &path) {
@@ -68,6 +69,8 @@ void Parameters::readConfig(const std::string &path) {
   readYamlNode(params_[par_output_file], config[par_output_file],
                ParamDataType::t_string);
   readYamlNode(params_[par_output_items_separator], config[par_output_items_separator],
+               ParamDataType::t_string);
+  readYamlNode(params_[par_output_events_separator], config[par_output_events_separator],
                ParamDataType::t_string);
 }
 

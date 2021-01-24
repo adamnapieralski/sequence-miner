@@ -55,10 +55,11 @@ bool AlgorithmManager::exportResults() {
   try {
     auto outputFile = parameters_.getString(par_output_file);
     auto outputItemsSeparator = parameters_.getString(par_output_items_separator);
+    auto outputEventsSeparator = parameters_.getString(par_output_events_separator);
 
     std::ofstream f(outputFile, std::ofstream::out);
     if (f) {
-      algorithm_->exportFinalSequences(f, outputItemsSeparator);
+      algorithm_->exportFinalSequences(f, outputItemsSeparator, outputEventsSeparator);
       return true;
     }
   } catch (const std::runtime_error& e) {
