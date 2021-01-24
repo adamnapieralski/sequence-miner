@@ -5,9 +5,11 @@
 #include <map>
 #include <string>
 
+#include "SequenceData.h"
 #include "utils.hpp"
 
-SequenceMap parser::readStringData(std::ifstream& f, std::string idSep, std::string elemSep,
+SequenceMap parser::readStringData(std::ifstream& f, std::string idSep,
+                                   std::string elemSep,
                                    std::map<std::string, int>& stringToInt,
                                    std::map<int, std::string>& intToString) {
   int seqId = 0;
@@ -33,7 +35,7 @@ SequenceMap parser::readStringData(std::ifstream& f, std::string idSep, std::str
     timeId = std::stoi(line.substr(0, sepPos));
     line.erase(0, sepPos + idSep.length());
 
-    auto &seq_item = seqs[seqId];
+    auto& seq_item = seqs[seqId];
 
     while (line.size() > 0) {
       sepPos = line.find(elemSep);
@@ -57,15 +59,17 @@ SequenceMap parser::readStringData(std::ifstream& f, std::string idSep, std::str
       }
     }
 
-    seq_item.push_back(-1);
+    seq_item.push_back(SEP);
   }
 
-  std::cout << "String to Int map: " << utils::printMap(stringToInt) << std::endl;
-  std::cout << "Int to string map: " << utils::printMap(intToString) << std::endl;
+  std::cout << "String to Int map: " << utils::printMap(stringToInt)
+            << std::endl;
+  std::cout << "Int to string map: " << utils::printMap(intToString)
+            << std::endl;
   return seqs;
 }
 
-SequenceMap parser::readSpfm(std::ifstream &f, int limit) {
+SequenceMap parser::readSpfm(std::ifstream& f, int limit) {
   SequenceMap seqs;
 
   std::string line;
@@ -85,7 +89,11 @@ SequenceMap parser::readSpfm(std::ifstream &f, int limit) {
     std::vector<int> v;
 
     while (iss >> val && val != -2) {
-      v.push_back(val);
+      if (val == -1) {
+        v.push_back(SEP);
+      } else {
+        v.push_back(val);
+      }
     }
 
     seqs[++seqId] = v;

@@ -1,13 +1,15 @@
 #pragma once
 
+#include <map>
 #include <set>
 #include <string>
 #include <vector>
-#include <map>
 
 #include "EquivalenceClass.h"
 
 enum class DataType { t_int, t_string };
+
+static const int SEP = std::numeric_limits<int>::min();
 
 using iterator = std::vector<std::vector<int>>::iterator;
 using const_iterator = std::vector<std::vector<int>>::const_iterator;
@@ -55,7 +57,7 @@ class SequenceData {
   IdList_ getSingleItemIdList(int item) const;
 
   std::vector<EquivalenceClass_> getSingleFrequentItemClasses(
-    int minSupport, bool withIdLists=false) const;
+      int minSupport, bool withIdLists = false) const;
 
   void updateSeqClassMap(std::map<Sequence, EquivalenceClass_> &seqClassMap,
                          const Sequence &seq, int sid, int eid) const;

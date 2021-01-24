@@ -95,6 +95,8 @@ std::vector<int> PrefixSpanAlgorithm::frequentItems(
     const Prefix &prefix, const SequenceData &data) const {
   std::unordered_map<int, int> counter;
 
+  std::set<int> pref_set(prefix.begin(), prefix.end());
+
   for (const auto &seq : data) {
     if (seq.empty()) {
       continue;
@@ -104,7 +106,7 @@ std::vector<int> PrefixSpanAlgorithm::frequentItems(
 
     // if prefix is a part of the first element
     auto it = seq.begin();
-    while (it != seq.end() && *it != -1) {
+    while (it != seq.end() && *it != SEP) {
       items.insert(-1 * (*it));
       ++it;
     }
@@ -112,10 +114,10 @@ std::vector<int> PrefixSpanAlgorithm::frequentItems(
     // If item is negative, it means it's a part of the element that also
     // contains the prefix
     for (; it != seq.end(); ++it) {
-      if (*it != -1) {
+      if (*it != SEP) {
         if (*(it - 1) == prefix.back()) {
           items.insert(-1 * (*it));
-        } else {
+        } else if (pref_set.find(*it) == pref_set.end()) {
           items.insert(*it);
         }
       }
@@ -185,7 +187,7 @@ void PrefixSpanAlgorithm::recursiveSolve(const Prefix &prefix,
           projectedData.emplace_back(it + 1, seq.cend());
           break;
         }
-        if (*it == -1) {
+        if (*it == SEP) {
           first_element = false;
         }
       }
@@ -197,7 +199,7 @@ void PrefixSpanAlgorithm::recursiveSolve(const Prefix &prefix,
 
     auto new_prefix(prefix);
     if (pref > 0) {
-      new_prefix.push_back(-1);
+      new_prefix.push_back(SEP);
       new_prefix.push_back(pref);
     } else {
       new_prefix.push_back(-1 * pref);
@@ -213,7 +215,7 @@ void PrefixSpanAlgorithm::appendFinalSequences(const Prefix &prefix,
   for (auto item : items) {
     Sequence s(prefix);
     if (item > 0) {
-      s.push_back(-1);
+      s.push_back(SEP);
       s.push_back(item);
     } else {
       s.push_back(-1 * item);
