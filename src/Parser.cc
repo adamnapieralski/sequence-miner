@@ -62,10 +62,6 @@ SequenceMap parser::readStringData(std::ifstream& f, std::string idSep,
     seq_item.push_back(SEP);
   }
 
-  std::cout << "String to Int map: " << utils::printMap(stringToInt)
-            << std::endl;
-  std::cout << "Int to string map: " << utils::printMap(intToString)
-            << std::endl;
   return seqs;
 }
 

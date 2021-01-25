@@ -9,7 +9,6 @@ using ParamsMap = std::map<std::string, std::variant<int, bool, std::string>>;
 const std::string par_input = "input_file";
 const std::string par_input_ids_separator = "input_ids_separator";
 const std::string par_input_items_separator = "input_items_separator";
-const std::string par_data_type = "data_type";
 const std::string par_algorithm = "algorithm";
 const std::string par_min_support = "min_support";
 const std::string par_input_limit = "input_limit";
