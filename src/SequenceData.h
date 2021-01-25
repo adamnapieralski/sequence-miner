@@ -25,7 +25,7 @@ class SequenceData {
   SequenceData &operator=(SequenceData &&) = default;
 
   void load(const std::string &input_path, std::string separator,
-            std::string seq_separator, DataType type, int limit);
+            std::string seq_separator, int limit);
 
   std::string getOriginalStringForId(int id) const;
 
