@@ -17,10 +17,31 @@ def run_spmf(spmf_path, input_file, algorithm, min_support, output_file):
     results = subprocess.run(['java', '-jar', spmf_path, 'run', algorithm, input_file, output_file, str(min_support)], capture_output=True)
     return results.stdout
 
-def create_config(fname, algorithm, min_support, input_file, dfs):
+def create_config(fname, algorithm, min_support, input_file, dfs, output_file, output_items_separator, output_events_separator):
 
-    config = "input_file: {input_file}\nmin_support: {support}\nalgorithm: {algorithm}\nspade_dfs: {dfs}\ndata_type: 'int'".format(
-        input_file=input_file, support=min_support, algorithm=algorithm.lower(), dfs=str(dfs).lower()
+    config = (
+        "input_file: {input_file}\n"
+        "input_ids_separator: {input_ids_separator}\n"
+        "input_items_separator: {input_items_separator}\n"
+        "min_support: {support}\n"
+        "algorithm: {algorithm}\n"
+        "spade_dfs: {dfs}\n"
+        "data_type: 'int'\n"
+        "output_file: {output_file}\n"
+        "output_items_separator: {output_items_separator}\n"
+        "output_events_separator: {output_events_separator}\n"
+
+    )
+    config = config.format(
+        input_file=input_file,
+        input_ids_separator='" "',
+        input_items_separator='" "',
+        support=min_support,
+        algorithm=algorithm.lower(),
+        dfs=str(dfs).lower(),
+        output_file=output_file,
+        output_items_separator='"' + output_items_separator + '"',
+        output_events_separator='"' + output_events_separator + '"'
     )
 
     with open(fname, 'w') as f:
@@ -28,9 +49,9 @@ def create_config(fname, algorithm, min_support, input_file, dfs):
 
 def run_sequence_miner(sequence_miner_path, input_file, algorithm, min_support, output_file, dfs=True):
     config = 'temp_config.yaml'
-    create_config(config, algorithm, min_support, input_file, dfs)
+    create_config(config, algorithm, min_support, input_file, dfs, output_file, ' ', '->')
 
-    results = subprocess.run([sequence_miner_path, config, output_file], capture_output=True)
+    results = subprocess.run([sequence_miner_path, config], capture_output=True)
     return results.stdout
 
 def process_spmf_stdout(out, print_out=False):
@@ -52,7 +73,7 @@ def process_spmf_stdout(out, print_out=False):
 
     return results
 
-def process_sequence_miner_stadout(out, print_out=False):
+def process_sequence_miner_stdout(out, print_out=False):
     text = out.decode('utf-8')
 
     if print_out:
@@ -86,7 +107,7 @@ def benchmark(program, input_file, algorithm, min_support, output_file, print_ou
         s = time.time()
         out = run_sequence_miner(program, input_file, algorithm, min_support, output_file)
         dt = round((time.time() - s)*1000) # to ms
-        res = process_sequence_miner_stadout(out, print_out)
+        res = process_sequence_miner_stdout(out, print_out)
         res['real_time'] = dt
         return res
     return None

@@ -14,6 +14,7 @@ data_type: string
 
 output_file: /home/napiad/eiti_sem2/med/sequence-miner/data/out.txt
 output_items_separator: ","
+output_events_separator: "->"
 
 # algorithm to detect sequences, possible values: spade, prefixspan
 # algorithm: 'prefixspan'
