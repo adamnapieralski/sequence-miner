@@ -93,7 +93,7 @@ def process_sequence_miner_stdout(out, print_out=False):
     return results
 
 
-def benchmark(program, input_file, algorithm, min_support, output_file, print_out=False):
+def benchmark(program, input_file, algorithm, min_support, output_file, print_out=False, dfs=True):
     if program.endswith('spmf.jar'):
         s = time.time()
         out = run_spmf(program, input_file, algorithm, min_support, output_file)
@@ -105,7 +105,7 @@ def benchmark(program, input_file, algorithm, min_support, output_file, print_ou
         if isinstance(min_support, float):
             min_support = sequence_miner_min_support(min_support, input_file)
         s = time.time()
-        out = run_sequence_miner(program, input_file, algorithm, min_support, output_file)
+        out = run_sequence_miner(program, input_file, algorithm, min_support, output_file, dfs)
         dt = round((time.time() - s)*1000) # to ms
         res = process_sequence_miner_stdout(out, print_out)
         res['real_time'] = dt

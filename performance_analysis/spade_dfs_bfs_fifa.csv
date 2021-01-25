@@ -1,0 +1,9 @@
+algorithm,input_file,all_sequences,min_support,frequenct_sequences,time,real_time
+SPADE_dfs,fifa.spmf,20450,0.15,5123,128705,131924
+SPADE_bfs,fifa.spmf,20450,0.15,5123,121441,124557
+SPADE_dfs,fifa.spmf,20450,0.2,938,73260,74862
+SPADE_bfs,fifa.spmf,20450,0.2,938,70549,72129
+SPADE_dfs,fifa.spmf,20450,0.25,277,58516,59396
+SPADE_bfs,fifa.spmf,20450,0.25,277,55933,56847
+SPADE_dfs,fifa.spmf,20450,0.3,47,49181,49491
+SPADE_bfs,fifa.spmf,20450,0.3,47,49159,49414

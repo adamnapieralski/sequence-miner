@@ -1,0 +1,3 @@
+algorithm,input_file,all_sequences,min_support,frequenct_sequences,time,real_time
+SPADE_bfs,bible.spmf,36370,0.1,174,24215,24665
+SPADE_dfs,bible.spmf,36370,0.1,174,24017,24440
