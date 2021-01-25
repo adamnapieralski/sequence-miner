@@ -31,11 +31,9 @@ int AlgorithmManager::run() {
     auto path = parameters_.getString(par_input);
     auto sep = parameters_.getString(par_input_ids_separator);
     auto seq_sep = parameters_.getString(par_input_items_separator);
-    auto type = parameters_.getString(par_data_type);
-    auto dtype = type == "string" ? DataType::t_string : DataType::t_int;
     auto limit = parameters_.getInt(par_input_limit);
 
-    algorithm_->loadData(path, sep, seq_sep, dtype, limit);
+    algorithm_->loadData(path, sep, seq_sep, limit);
 
   } catch (const std::runtime_error& e) {
     std::cout << "Error: " << e.what() << std::endl;

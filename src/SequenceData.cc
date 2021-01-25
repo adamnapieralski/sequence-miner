@@ -65,11 +65,8 @@ std::set<int> frequentItems(const std::vector<Sequence>& data, int minSupport) {
 }  // namespace
 
 void SequenceData::load(const std::string& input, std::string separator,
-                        std::string seq_separator, DataType data_type,
-                        int limit) {
+                        std::string seq_separator, int limit) {
   std::cout << "Loading file " << input << std::endl;
-
-  inputDataType_ = data_type;
 
   std::ifstream input_file{input};
 
@@ -80,12 +77,12 @@ void SequenceData::load(const std::string& input, std::string separator,
   SequenceMap seqs;
 
   if (input.substr(input.find_last_of('.') + 1) == "spmf") {
+    inputDataType_ = DataType::t_int;
     seqs = parser::readSpfm(input_file, limit);
-  } else if (data_type == DataType::t_string) {
+  } else {
+    inputDataType_ = DataType::t_string;
     seqs = parser::readStringData(input_file, separator, seq_separator,
                                   stringToInt_, intToString_);
-  } else {
-    std::cout << "Cannot parse input file. Invalid format." << std::endl;
   }
 
   SequenceData d;

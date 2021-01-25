@@ -8,8 +8,8 @@
 #include "utils.hpp"
 
 bool Algorithm::loadData(const std::string& input_path, std::string separator,
-                         std::string seq_separator, DataType type, int limit) {
-  input_.load(input_path, separator, seq_separator, type, limit);
+                         std::string seq_separator, int limit) {
+  input_.load(input_path, separator, seq_separator, limit);
   return true;
 }
 

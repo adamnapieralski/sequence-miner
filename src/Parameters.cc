@@ -35,7 +35,6 @@ Parameters::Parameters() {
              {par_input_items_separator, " "},
              {par_algorithm, "spade"},
              {par_min_support, 2},
-             {par_data_type, "string"},
              {par_spade_dfs, false},
              {par_input_limit, -1},
              {par_output_file, "./data/output.txt"},
@@ -55,8 +54,6 @@ void Parameters::readConfig(const std::string &path) {
                ParamDataType::t_string);
   readYamlNode(params_[par_min_support], config[par_min_support],
                ParamDataType::t_int);
-  readYamlNode(params_[par_data_type], config[par_data_type],
-               ParamDataType::t_string);
   readYamlNode(params_[par_input_limit], config[par_input_limit],
                ParamDataType::t_int);
   readYamlNode(params_[par_spade_dfs], config[par_spade_dfs],
