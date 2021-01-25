@@ -1,9 +1,10 @@
 program,algorithm,input_file,all_sequences,min_support,frequenct_sequences,time,real_time
-miner,PrefixSpan,bms_webview2.spmf,59601,0.002,798,356,457
-spmf,PrefixSpan,bms_webview2.spmf,59601,0.002,798,606,888
-miner,SPADE,bms_webview2.spmf,59601,0.002,798,1299,1432
-spmf,SPADE,bms_webview2.spmf,59601,0.002,798,1591,3096
 miner,PrefixSpan,bms_webview2.spmf,59601,0.001,3991,898,1004
 spmf,PrefixSpan,bms_webview2.spmf,59601,0.001,3991,984,1235
 miner,SPADE,bms_webview2.spmf,59601,0.001,3991,1721,1945
 spmf,SPADE,bms_webview2.spmf,59601,0.001,3991,8146,9542
+miner,PrefixSpan,bms_webview2.spmf,59601,0.002,798,356,457
+spmf,PrefixSpan,bms_webview2.spmf,59601,0.002,798,606,888
+miner,SPADE,bms_webview2.spmf,59601,0.002,798,1299,1432
+spmf,SPADE,bms_webview2.spmf,59601,0.002,798,1591,3096
+

@@ -1,0 +1,5 @@
+algorithm,input_file,all_sequences,min_support,frequenct_sequences,time,real_time
+SPADE_dfs,bms_webview2.spmf,59601,0.001,4218,1575,1707
+SPADE_bfs,bms_webview2.spmf,59601,0.001,4218,1676,1788
+SPADE_dfs,bms_webview2.spmf,59601,0.002,808,1214,1316
+SPADE_bfs,bms_webview2.spmf,59601,0.002,808,1158,1261

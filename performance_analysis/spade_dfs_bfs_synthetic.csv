@@ -1,0 +1,7 @@
+algorithm,input_file,all_sequences,min_support,frequenct_sequences,time,real_time
+SPADE_dfs,synthetic10k.spmf,10000,0.001,1541252,5152,6931
+SPADE_bfs,synthetic10k.spmf,10000,0.001,1541252,5232,8068
+SPADE_dfs,synthetic10k.spmf,10000,0.002,4024,1290,1333
+SPADE_bfs,synthetic10k.spmf,10000,0.002,4024,1332,1382
+SPADE_dfs,synthetic10k.spmf,10000,0.003,10,1258,1301
+SPADE_bfs,synthetic10k.spmf,10000,0.003,10,1295,1335
