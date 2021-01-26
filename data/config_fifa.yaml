@@ -9,9 +9,9 @@ input_items_separator: ", "
 # file to write frequent sequences
 output_file: ./data/out.txt
 # separator between items in output files
-output_items_separator: ","
+output_items_separator: " "
 # separator between itemsets in output files
-output_events_separator: "->"
+output_events_separator: "-1"
 # algorithm to detect sequences, possible values: spade, prefixspan
 algorithm: prefixspan
 # if true spade uses DFS, BFS otherwise

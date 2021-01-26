@@ -117,10 +117,6 @@ int SequenceData::removeInfrequentItems(int min_support) {
 
   std::cout << "Removing " << items_to_delete.size() << " infrequent items"
             << std::endl;
-  // for (auto item : items_to_delete) {
-  //   std::cout << item << " ";
-  // }
-  // std::cout << std::endl;
 
   auto transform_function = [&items_to_delete](Sequence seq) {
     seq.erase(std::remove_if(seq.begin(), seq.end(),
