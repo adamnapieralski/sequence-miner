@@ -1,9 +1,0 @@
-algorithm,input_file,all_sequences,min_support,frequenct_sequences,time,real_time
-PrefixSpan,fifa.spmf,20450,0.3,47,817,1021
-SPADE,fifa.spmf,20450,0.3,47,62819,63105
-PrefixSpan,fifa.spmf,20450,0.25,277,3003,3222
-SPADE,fifa.spmf,20450,0.25,277,69324,70443
-PrefixSpan,fifa.spmf,20450,0.2,938,6867,7069
-SPADE,fifa.spmf,20450,0.2,938,92747,95214
-PrefixSpan,fifa.spmf,20450,0.15,5123,25681,25908
-SPADE,fifa.spmf,20450,0.15,5123,161919,166448

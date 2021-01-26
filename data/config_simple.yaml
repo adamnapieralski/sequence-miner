@@ -1,0 +1,20 @@
+# file with input data, full path should be provided
+input_file: ./data/simple_input.txt
+# minimum support for the sequence
+min_support: 2
+# separator between sequence_id, time_id and the sequence data
+input_ids_separator: " "
+# separator between sequence items in one time point
+input_items_separator: ", "
+# file to write frequent sequences
+output_file: ./data/out.txt
+# separator between items in output files
+output_items_separator: ","
+# separator between itemsets in output files
+output_events_separator: "->"
+# algorithm to detect sequences, possible values: spade, prefixspan
+algorithm: prefixspan
+# if true spade uses DFS, BFS otherwise
+spade_dfs: false
+# maximum number of sequences to read from the input, if -1 whole file is read
+input_limit: -1
