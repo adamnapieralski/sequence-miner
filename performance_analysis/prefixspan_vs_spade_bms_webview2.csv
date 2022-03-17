@@ -1,5 +1,0 @@
-algorithm,input_file,all_sequences,min_support,frequenct_sequences,time,real_time
-PrefixSpan,bms_webview2.spmf,59601,0.02,22,32,123
-SPADE,bms_webview2.spmf,59601,0.02,22,1284,1392
-PrefixSpan,bms_webview2.spmf,59601,0.01,78,102,211
-SPADE,bms_webview2.spmf,59601,0.01,78,1699,1847

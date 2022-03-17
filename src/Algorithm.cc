@@ -45,7 +45,8 @@ void Algorithm::printFinalSequences() {
   std::cout << "Size: " << final_sequences_.size() << std::endl;
 }
 
-void Algorithm::exportFinalSequences(std::ofstream& f, std::string itemsSep, std::string eventsSep) {
+void Algorithm::exportFinalSequences(std::ofstream& f, std::string itemsSep,
+                                     std::string eventsSep) {
   if (input_.getInputDataType() == DataType::t_string) {
     for (const auto& seq : getFinalSequencesAsOriginalStrings(eventsSep)) {
       for (const auto& elem : seq) {
@@ -58,7 +59,11 @@ void Algorithm::exportFinalSequences(std::ofstream& f, std::string itemsSep, std
     std::sort(final_sequences_.begin(), final_sequences_.end());
     for (const auto& seq : final_sequences_) {
       for (const auto& elem : seq) {
-        f << elem << itemsSep;
+        if (elem != SEP) {
+          f << elem << itemsSep;
+        } else {
+          f << eventsSep << itemsSep;
+        }
       }
       f << "\n";
     }

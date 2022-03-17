@@ -170,12 +170,7 @@ std::vector<int> PrefixSpanAlgorithm::frequentItems(
  */
 void PrefixSpanAlgorithm::recursiveSolve(const Prefix &prefix,
                                          const SequenceData &data) {
-  // std::cout << "recursiveSolve for " << utils::print(prefix) << std::endl;
-  // std::cout << "Projected data " << std::endl;
-  // data.printData();
-
   const auto freq_items = frequentItems(prefix, data);
-  // std::cout << "frequent items: " << utils::print(freq_items) << std::endl;
 
   if (freq_items.empty()) {
     return;
